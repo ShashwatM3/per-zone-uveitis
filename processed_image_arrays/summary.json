@@ -1,0 +1,1537 @@
+{
+  "input_data_dir": "/home/shashwat/convnext-implementation/Sample 2.5.2026",
+  "output_dir": "/home/shashwat/per-zone-uveitis/processed_image_arrays",
+  "patients": {
+    "Patient010": {
+      "20230613": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient010/20230613/images.npz",
+        "metadata_path": "processed_image_arrays/Patient010/20230613/metadata.json"
+      },
+      "20240723": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient010/20240723/images.npz",
+        "metadata_path": "processed_image_arrays/Patient010/20240723/metadata.json"
+      }
+    },
+    "Patient011": {
+      "20210615": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient011/20210615/images.npz",
+        "metadata_path": "processed_image_arrays/Patient011/20210615/metadata.json"
+      },
+      "20210914": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient011/20210914/images.npz",
+        "metadata_path": "processed_image_arrays/Patient011/20210914/metadata.json"
+      },
+      "20250506": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient011/20250506/images.npz",
+        "metadata_path": "processed_image_arrays/Patient011/20250506/metadata.json"
+      }
+    },
+    "Patient012": {
+      "20210330": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient012/20210330/images.npz",
+        "metadata_path": "processed_image_arrays/Patient012/20210330/metadata.json"
+      }
+    },
+    "Patient013": {
+      "20210921": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient013/20210921/images.npz",
+        "metadata_path": "processed_image_arrays/Patient013/20210921/metadata.json"
+      }
+    },
+    "Patient014": {
+      "20210119": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient014/20210119/images.npz",
+        "metadata_path": "processed_image_arrays/Patient014/20210119/metadata.json"
+      }
+    },
+    "Patient015": {
+      "20231212": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient015/20231212/images.npz",
+        "metadata_path": "processed_image_arrays/Patient015/20231212/metadata.json"
+      }
+    },
+    "Patient016": {
+      "20210202": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient016/20210202/images.npz",
+        "metadata_path": "processed_image_arrays/Patient016/20210202/metadata.json"
+      },
+      "20210614": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient016/20210614/images.npz",
+        "metadata_path": "processed_image_arrays/Patient016/20210614/metadata.json"
+      },
+      "20220809": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient016/20220809/images.npz",
+        "metadata_path": "processed_image_arrays/Patient016/20220809/metadata.json"
+      },
+      "20231107": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient016/20231107/images.npz",
+        "metadata_path": "processed_image_arrays/Patient016/20231107/metadata.json"
+      },
+      "20240423": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient016/20240423/images.npz",
+        "metadata_path": "processed_image_arrays/Patient016/20240423/metadata.json"
+      },
+      "20241112": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient016/20241112/images.npz",
+        "metadata_path": "processed_image_arrays/Patient016/20241112/metadata.json"
+      },
+      "20250401": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient016/20250401/images.npz",
+        "metadata_path": "processed_image_arrays/Patient016/20250401/metadata.json"
+      }
+    },
+    "Patient017": {
+      "20250414": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient017/20250414/images.npz",
+        "metadata_path": "processed_image_arrays/Patient017/20250414/metadata.json"
+      }
+    },
+    "Patient018": {
+      "20220621": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient018/20220621/images.npz",
+        "metadata_path": "processed_image_arrays/Patient018/20220621/metadata.json"
+      }
+    },
+    "Patient019": {
+      "20220816": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient019/20220816/images.npz",
+        "metadata_path": "processed_image_arrays/Patient019/20220816/metadata.json"
+      }
+    },
+    "Patient020": {
+      "20230411": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient020/20230411/images.npz",
+        "metadata_path": "processed_image_arrays/Patient020/20230411/metadata.json"
+      }
+    },
+    "Patient021": {
+      "20220809": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient021/20220809/images.npz",
+        "metadata_path": "processed_image_arrays/Patient021/20220809/metadata.json"
+      }
+    },
+    "Patient022": {
+      "20221122": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient022/20221122/images.npz",
+        "metadata_path": "processed_image_arrays/Patient022/20221122/metadata.json"
+      }
+    },
+    "Patient023": {
+      "20221011": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient023/20221011/images.npz",
+        "metadata_path": "processed_image_arrays/Patient023/20221011/metadata.json"
+      }
+    },
+    "Patient024": {
+      "20230117": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient024/20230117/images.npz",
+        "metadata_path": "processed_image_arrays/Patient024/20230117/metadata.json"
+      },
+      "20230516": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient024/20230516/images.npz",
+        "metadata_path": "processed_image_arrays/Patient024/20230516/metadata.json"
+      },
+      "20241008": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient024/20241008/images.npz",
+        "metadata_path": "processed_image_arrays/Patient024/20241008/metadata.json"
+      }
+    },
+    "Patient025": {
+      "20210608": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient025/20210608/images.npz",
+        "metadata_path": "processed_image_arrays/Patient025/20210608/metadata.json"
+      },
+      "20210824": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient025/20210824/images.npz",
+        "metadata_path": "processed_image_arrays/Patient025/20210824/metadata.json"
+      },
+      "20230530": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient025/20230530/images.npz",
+        "metadata_path": "processed_image_arrays/Patient025/20230530/metadata.json"
+      },
+      "20240521": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient025/20240521/images.npz",
+        "metadata_path": "processed_image_arrays/Patient025/20240521/metadata.json"
+      }
+    },
+    "Patient026": {
+      "20220125": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient026/20220125/images.npz",
+        "metadata_path": "processed_image_arrays/Patient026/20220125/metadata.json"
+      },
+      "20231205": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient026/20231205/images.npz",
+        "metadata_path": "processed_image_arrays/Patient026/20231205/metadata.json"
+      },
+      "20240528": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient026/20240528/images.npz",
+        "metadata_path": "processed_image_arrays/Patient026/20240528/metadata.json"
+      }
+    },
+    "Patient027": {
+      "20220329": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient027/20220329/images.npz",
+        "metadata_path": "processed_image_arrays/Patient027/20220329/metadata.json"
+      }
+    },
+    "Patient028": {
+      "20210223": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient028/20210223/images.npz",
+        "metadata_path": "processed_image_arrays/Patient028/20210223/metadata.json"
+      }
+    },
+    "Patient029": {
+      "20210601": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient029/20210601/images.npz",
+        "metadata_path": "processed_image_arrays/Patient029/20210601/metadata.json"
+      },
+      "20220125": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient029/20220125/images.npz",
+        "metadata_path": "processed_image_arrays/Patient029/20220125/metadata.json"
+      }
+    },
+    "Patient030": {
+      "20210427": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient030/20210427/images.npz",
+        "metadata_path": "processed_image_arrays/Patient030/20210427/metadata.json"
+      },
+      "20211102": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient030/20211102/images.npz",
+        "metadata_path": "processed_image_arrays/Patient030/20211102/metadata.json"
+      },
+      "20220308": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient030/20220308/images.npz",
+        "metadata_path": "processed_image_arrays/Patient030/20220308/metadata.json"
+      },
+      "20220531": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient030/20220531/images.npz",
+        "metadata_path": "processed_image_arrays/Patient030/20220531/metadata.json"
+      },
+      "20250422": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient030/20250422/images.npz",
+        "metadata_path": "processed_image_arrays/Patient030/20250422/metadata.json"
+      }
+    },
+    "Patient031": {
+      "20230516": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient031/20230516/images.npz",
+        "metadata_path": "processed_image_arrays/Patient031/20230516/metadata.json"
+      }
+    },
+    "Patient033": {
+      "20210630": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient033/20210630/images.npz",
+        "metadata_path": "processed_image_arrays/Patient033/20210630/metadata.json"
+      }
+    },
+    "Patient034": {
+      "20240702": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient034/20240702/images.npz",
+        "metadata_path": "processed_image_arrays/Patient034/20240702/metadata.json"
+      }
+    },
+    "Patient035": {
+      "20200811": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient035/20200811/images.npz",
+        "metadata_path": "processed_image_arrays/Patient035/20200811/metadata.json"
+      },
+      "20201124": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient035/20201124/images.npz",
+        "metadata_path": "processed_image_arrays/Patient035/20201124/metadata.json"
+      },
+      "20210223": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient035/20210223/images.npz",
+        "metadata_path": "processed_image_arrays/Patient035/20210223/metadata.json"
+      },
+      "20230711": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient035/20230711/images.npz",
+        "metadata_path": "processed_image_arrays/Patient035/20230711/metadata.json"
+      },
+      "20250624": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient035/20250624/images.npz",
+        "metadata_path": "processed_image_arrays/Patient035/20250624/metadata.json"
+      }
+    },
+    "Patient036": {
+      "20200601": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient036/20200601/images.npz",
+        "metadata_path": "processed_image_arrays/Patient036/20200601/metadata.json"
+      },
+      "20210413": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient036/20210413/images.npz",
+        "metadata_path": "processed_image_arrays/Patient036/20210413/metadata.json"
+      },
+      "20220125": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient036/20220125/images.npz",
+        "metadata_path": "processed_image_arrays/Patient036/20220125/metadata.json"
+      }
+    },
+    "Patient037": {
+      "20210525": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient037/20210525/images.npz",
+        "metadata_path": "processed_image_arrays/Patient037/20210525/metadata.json"
+      },
+      "20210831": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient037/20210831/images.npz",
+        "metadata_path": "processed_image_arrays/Patient037/20210831/metadata.json"
+      },
+      "20211109": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient037/20211109/images.npz",
+        "metadata_path": "processed_image_arrays/Patient037/20211109/metadata.json"
+      },
+      "20230307": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient037/20230307/images.npz",
+        "metadata_path": "processed_image_arrays/Patient037/20230307/metadata.json"
+      },
+      "20230725": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient037/20230725/images.npz",
+        "metadata_path": "processed_image_arrays/Patient037/20230725/metadata.json"
+      },
+      "20231024": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient037/20231024/images.npz",
+        "metadata_path": "processed_image_arrays/Patient037/20231024/metadata.json"
+      },
+      "20240326": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient037/20240326/images.npz",
+        "metadata_path": "processed_image_arrays/Patient037/20240326/metadata.json"
+      },
+      "20240730": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient037/20240730/images.npz",
+        "metadata_path": "processed_image_arrays/Patient037/20240730/metadata.json"
+      }
+    },
+    "Patient038": {
+      "20211026": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient038/20211026/images.npz",
+        "metadata_path": "processed_image_arrays/Patient038/20211026/metadata.json"
+      },
+      "20220215": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient038/20220215/images.npz",
+        "metadata_path": "processed_image_arrays/Patient038/20220215/metadata.json"
+      }
+    },
+    "Patient039": {
+      "20201229": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient039/20201229/images.npz",
+        "metadata_path": "processed_image_arrays/Patient039/20201229/metadata.json"
+      },
+      "20210323": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient039/20210323/images.npz",
+        "metadata_path": "processed_image_arrays/Patient039/20210323/metadata.json"
+      },
+      "20210629": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient039/20210629/images.npz",
+        "metadata_path": "processed_image_arrays/Patient039/20210629/metadata.json"
+      }
+    },
+    "Patient040": {
+      "20200707": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient040/20200707/images.npz",
+        "metadata_path": "processed_image_arrays/Patient040/20200707/metadata.json"
+      },
+      "20200811": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient040/20200811/images.npz",
+        "metadata_path": "processed_image_arrays/Patient040/20200811/metadata.json"
+      },
+      "20201020": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient040/20201020/images.npz",
+        "metadata_path": "processed_image_arrays/Patient040/20201020/metadata.json"
+      },
+      "20201222": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient040/20201222/images.npz",
+        "metadata_path": "processed_image_arrays/Patient040/20201222/metadata.json"
+      },
+      "20210330": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient040/20210330/images.npz",
+        "metadata_path": "processed_image_arrays/Patient040/20210330/metadata.json"
+      },
+      "20210629": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient040/20210629/images.npz",
+        "metadata_path": "processed_image_arrays/Patient040/20210629/metadata.json"
+      },
+      "20210831": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient040/20210831/images.npz",
+        "metadata_path": "processed_image_arrays/Patient040/20210831/metadata.json"
+      },
+      "20211221": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient040/20211221/images.npz",
+        "metadata_path": "processed_image_arrays/Patient040/20211221/metadata.json"
+      },
+      "20220315": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient040/20220315/images.npz",
+        "metadata_path": "processed_image_arrays/Patient040/20220315/metadata.json"
+      }
+    },
+    "Patient041": {
+      "20210413": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient041/20210413/images.npz",
+        "metadata_path": "processed_image_arrays/Patient041/20210413/metadata.json"
+      },
+      "20210615": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient041/20210615/images.npz",
+        "metadata_path": "processed_image_arrays/Patient041/20210615/metadata.json"
+      },
+      "20210713": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient041/20210713/images.npz",
+        "metadata_path": "processed_image_arrays/Patient041/20210713/metadata.json"
+      }
+    },
+    "Patient042": {
+      "20200915": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient042/20200915/images.npz",
+        "metadata_path": "processed_image_arrays/Patient042/20200915/metadata.json"
+      }
+    },
+    "Patient043": {
+      "20210323": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient043/20210323/images.npz",
+        "metadata_path": "processed_image_arrays/Patient043/20210323/metadata.json"
+      },
+      "20210601": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient043/20210601/images.npz",
+        "metadata_path": "processed_image_arrays/Patient043/20210601/metadata.json"
+      },
+      "20210706": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient043/20210706/images.npz",
+        "metadata_path": "processed_image_arrays/Patient043/20210706/metadata.json"
+      },
+      "20210928": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient043/20210928/images.npz",
+        "metadata_path": "processed_image_arrays/Patient043/20210928/metadata.json"
+      },
+      "20220628": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient043/20220628/images.npz",
+        "metadata_path": "processed_image_arrays/Patient043/20220628/metadata.json"
+      },
+      "20220830": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient043/20220830/images.npz",
+        "metadata_path": "processed_image_arrays/Patient043/20220830/metadata.json"
+      },
+      "20240423": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient043/20240423/images.npz",
+        "metadata_path": "processed_image_arrays/Patient043/20240423/metadata.json"
+      }
+    },
+    "Patient044": {
+      "20210406": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient044/20210406/images.npz",
+        "metadata_path": "processed_image_arrays/Patient044/20210406/metadata.json"
+      }
+    },
+    "Patient045": {
+      "20220510": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient045/20220510/images.npz",
+        "metadata_path": "processed_image_arrays/Patient045/20220510/metadata.json"
+      },
+      "20220614": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient045/20220614/images.npz",
+        "metadata_path": "processed_image_arrays/Patient045/20220614/metadata.json"
+      },
+      "20220816": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient045/20220816/images.npz",
+        "metadata_path": "processed_image_arrays/Patient045/20220816/metadata.json"
+      },
+      "20221108": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient045/20221108/images.npz",
+        "metadata_path": "processed_image_arrays/Patient045/20221108/metadata.json"
+      }
+    },
+    "Patient046": {
+      "20210601": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient046/20210601/images.npz",
+        "metadata_path": "processed_image_arrays/Patient046/20210601/metadata.json"
+      },
+      "20210622": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient046/20210622/images.npz",
+        "metadata_path": "processed_image_arrays/Patient046/20210622/metadata.json"
+      },
+      "20211130": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient046/20211130/images.npz",
+        "metadata_path": "processed_image_arrays/Patient046/20211130/metadata.json"
+      }
+    },
+    "Patient047": {
+      "20240510": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient047/20240510/images.npz",
+        "metadata_path": "processed_image_arrays/Patient047/20240510/metadata.json"
+      },
+      "20240830": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient047/20240830/images.npz",
+        "metadata_path": "processed_image_arrays/Patient047/20240830/metadata.json"
+      },
+      "20250509": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient047/20250509/images.npz",
+        "metadata_path": "processed_image_arrays/Patient047/20250509/metadata.json"
+      }
+    },
+    "Patient048": {
+      "20220104": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient048/20220104/images.npz",
+        "metadata_path": "processed_image_arrays/Patient048/20220104/metadata.json"
+      }
+    },
+    "Patient049": {
+      "20230530": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient049/20230530/images.npz",
+        "metadata_path": "processed_image_arrays/Patient049/20230530/metadata.json"
+      }
+    },
+    "Patient050": {
+      "20210727": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient050/20210727/images.npz",
+        "metadata_path": "processed_image_arrays/Patient050/20210727/metadata.json"
+      },
+      "20220301": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient050/20220301/images.npz",
+        "metadata_path": "processed_image_arrays/Patient050/20220301/metadata.json"
+      }
+    },
+    "Patient051": {
+      "20240827": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient051/20240827/images.npz",
+        "metadata_path": "processed_image_arrays/Patient051/20240827/metadata.json"
+      }
+    },
+    "Patient052": {
+      "20220118": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient052/20220118/images.npz",
+        "metadata_path": "processed_image_arrays/Patient052/20220118/metadata.json"
+      },
+      "20240423": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient052/20240423/images.npz",
+        "metadata_path": "processed_image_arrays/Patient052/20240423/metadata.json"
+      }
+    },
+    "Patient053": {
+      "20211109": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient053/20211109/images.npz",
+        "metadata_path": "processed_image_arrays/Patient053/20211109/metadata.json"
+      }
+    },
+    "Patient054": {
+      "20200922": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient054/20200922/images.npz",
+        "metadata_path": "processed_image_arrays/Patient054/20200922/metadata.json"
+      },
+      "20211221": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient054/20211221/images.npz",
+        "metadata_path": "processed_image_arrays/Patient054/20211221/metadata.json"
+      },
+      "20230606": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient054/20230606/images.npz",
+        "metadata_path": "processed_image_arrays/Patient054/20230606/metadata.json"
+      },
+      "20231031": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient054/20231031/images.npz",
+        "metadata_path": "processed_image_arrays/Patient054/20231031/metadata.json"
+      },
+      "20240312": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient054/20240312/images.npz",
+        "metadata_path": "processed_image_arrays/Patient054/20240312/metadata.json"
+      }
+    },
+    "Patient055": {
+      "20210202": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient055/20210202/images.npz",
+        "metadata_path": "processed_image_arrays/Patient055/20210202/metadata.json"
+      },
+      "20210316": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient055/20210316/images.npz",
+        "metadata_path": "processed_image_arrays/Patient055/20210316/metadata.json"
+      },
+      "20210427": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient055/20210427/images.npz",
+        "metadata_path": "processed_image_arrays/Patient055/20210427/metadata.json"
+      },
+      "20210831": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient055/20210831/images.npz",
+        "metadata_path": "processed_image_arrays/Patient055/20210831/metadata.json"
+      }
+    },
+    "Patient056": {
+      "20200908": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient056/20200908/images.npz",
+        "metadata_path": "processed_image_arrays/Patient056/20200908/metadata.json"
+      },
+      "20201110": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient056/20201110/images.npz",
+        "metadata_path": "processed_image_arrays/Patient056/20201110/metadata.json"
+      },
+      "20201229": {
+        "num_images": 5,
+        "npz_path": "processed_image_arrays/Patient056/20201229/images.npz",
+        "metadata_path": "processed_image_arrays/Patient056/20201229/metadata.json"
+      },
+      "20210309": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient056/20210309/images.npz",
+        "metadata_path": "processed_image_arrays/Patient056/20210309/metadata.json"
+      },
+      "20210817": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient056/20210817/images.npz",
+        "metadata_path": "processed_image_arrays/Patient056/20210817/metadata.json"
+      },
+      "20211005": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient056/20211005/images.npz",
+        "metadata_path": "processed_image_arrays/Patient056/20211005/metadata.json"
+      },
+      "20220329": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient056/20220329/images.npz",
+        "metadata_path": "processed_image_arrays/Patient056/20220329/metadata.json"
+      },
+      "20220607": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient056/20220607/images.npz",
+        "metadata_path": "processed_image_arrays/Patient056/20220607/metadata.json"
+      },
+      "20220823": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient056/20220823/images.npz",
+        "metadata_path": "processed_image_arrays/Patient056/20220823/metadata.json"
+      }
+    },
+    "Patient057": {
+      "20220119": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient057/20220119/images.npz",
+        "metadata_path": "processed_image_arrays/Patient057/20220119/metadata.json"
+      },
+      "20220808": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient057/20220808/images.npz",
+        "metadata_path": "processed_image_arrays/Patient057/20220808/metadata.json"
+      },
+      "20230809": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient057/20230809/images.npz",
+        "metadata_path": "processed_image_arrays/Patient057/20230809/metadata.json"
+      }
+    },
+    "Patient058": {
+      "20210525": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient058/20210525/images.npz",
+        "metadata_path": "processed_image_arrays/Patient058/20210525/metadata.json"
+      },
+      "20210824": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient058/20210824/images.npz",
+        "metadata_path": "processed_image_arrays/Patient058/20210824/metadata.json"
+      },
+      "20220301": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient058/20220301/images.npz",
+        "metadata_path": "processed_image_arrays/Patient058/20220301/metadata.json"
+      },
+      "20220607": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient058/20220607/images.npz",
+        "metadata_path": "processed_image_arrays/Patient058/20220607/metadata.json"
+      },
+      "20230103": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient058/20230103/images.npz",
+        "metadata_path": "processed_image_arrays/Patient058/20230103/metadata.json"
+      },
+      "20230627": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient058/20230627/images.npz",
+        "metadata_path": "processed_image_arrays/Patient058/20230627/metadata.json"
+      },
+      "20241112": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient058/20241112/images.npz",
+        "metadata_path": "processed_image_arrays/Patient058/20241112/metadata.json"
+      },
+      "20250225": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient058/20250225/images.npz",
+        "metadata_path": "processed_image_arrays/Patient058/20250225/metadata.json"
+      }
+    },
+    "Patient059": {
+      "20210525": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient059/20210525/images.npz",
+        "metadata_path": "processed_image_arrays/Patient059/20210525/metadata.json"
+      },
+      "20240618": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient059/20240618/images.npz",
+        "metadata_path": "processed_image_arrays/Patient059/20240618/metadata.json"
+      },
+      "20240924": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient059/20240924/images.npz",
+        "metadata_path": "processed_image_arrays/Patient059/20240924/metadata.json"
+      },
+      "20250114": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient059/20250114/images.npz",
+        "metadata_path": "processed_image_arrays/Patient059/20250114/metadata.json"
+      }
+    },
+    "Patient060": {
+      "20210601": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient060/20210601/images.npz",
+        "metadata_path": "processed_image_arrays/Patient060/20210601/metadata.json"
+      }
+    },
+    "Patient061": {
+      "20220601": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient061/20220601/images.npz",
+        "metadata_path": "processed_image_arrays/Patient061/20220601/metadata.json"
+      },
+      "20220705": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient061/20220705/images.npz",
+        "metadata_path": "processed_image_arrays/Patient061/20220705/metadata.json"
+      }
+    },
+    "Patient062": {
+      "20230131": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient062/20230131/images.npz",
+        "metadata_path": "processed_image_arrays/Patient062/20230131/metadata.json"
+      },
+      "20230606": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient062/20230606/images.npz",
+        "metadata_path": "processed_image_arrays/Patient062/20230606/metadata.json"
+      },
+      "20230926": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient062/20230926/images.npz",
+        "metadata_path": "processed_image_arrays/Patient062/20230926/metadata.json"
+      },
+      "20240813": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient062/20240813/images.npz",
+        "metadata_path": "processed_image_arrays/Patient062/20240813/metadata.json"
+      },
+      "20250902": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient062/20250902/images.npz",
+        "metadata_path": "processed_image_arrays/Patient062/20250902/metadata.json"
+      }
+    },
+    "Patient063": {
+      "20200728": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient063/20200728/images.npz",
+        "metadata_path": "processed_image_arrays/Patient063/20200728/metadata.json"
+      },
+      "20210105": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient063/20210105/images.npz",
+        "metadata_path": "processed_image_arrays/Patient063/20210105/metadata.json"
+      },
+      "20210406": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient063/20210406/images.npz",
+        "metadata_path": "processed_image_arrays/Patient063/20210406/metadata.json"
+      },
+      "20211123": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient063/20211123/images.npz",
+        "metadata_path": "processed_image_arrays/Patient063/20211123/metadata.json"
+      },
+      "20231128": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient063/20231128/images.npz",
+        "metadata_path": "processed_image_arrays/Patient063/20231128/metadata.json"
+      },
+      "20250812": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient063/20250812/images.npz",
+        "metadata_path": "processed_image_arrays/Patient063/20250812/metadata.json"
+      }
+    },
+    "Patient064": {
+      "20240109": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient064/20240109/images.npz",
+        "metadata_path": "processed_image_arrays/Patient064/20240109/metadata.json"
+      }
+    },
+    "Patient065": {
+      "20100922": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient065/20100922/images.npz",
+        "metadata_path": "processed_image_arrays/Patient065/20100922/metadata.json"
+      }
+    },
+    "Patient066": {
+      "20220301": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient066/20220301/images.npz",
+        "metadata_path": "processed_image_arrays/Patient066/20220301/metadata.json"
+      }
+    },
+    "Patient067": {
+      "20240521": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient067/20240521/images.npz",
+        "metadata_path": "processed_image_arrays/Patient067/20240521/metadata.json"
+      }
+    },
+    "Patient068": {
+      "20200929": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient068/20200929/images.npz",
+        "metadata_path": "processed_image_arrays/Patient068/20200929/metadata.json"
+      },
+      "20201124": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient068/20201124/images.npz",
+        "metadata_path": "processed_image_arrays/Patient068/20201124/metadata.json"
+      },
+      "20210209": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient068/20210209/images.npz",
+        "metadata_path": "processed_image_arrays/Patient068/20210209/metadata.json"
+      },
+      "20220111": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient068/20220111/images.npz",
+        "metadata_path": "processed_image_arrays/Patient068/20220111/metadata.json"
+      },
+      "20220531": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient068/20220531/images.npz",
+        "metadata_path": "processed_image_arrays/Patient068/20220531/metadata.json"
+      }
+    },
+    "Patient069": {
+      "20230502": {
+        "num_images": 5,
+        "npz_path": "processed_image_arrays/Patient069/20230502/images.npz",
+        "metadata_path": "processed_image_arrays/Patient069/20230502/metadata.json"
+      },
+      "20230808": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient069/20230808/images.npz",
+        "metadata_path": "processed_image_arrays/Patient069/20230808/metadata.json"
+      }
+    },
+    "Patient070": {
+      "20201006": {
+        "num_images": 6,
+        "npz_path": "processed_image_arrays/Patient070/20201006/images.npz",
+        "metadata_path": "processed_image_arrays/Patient070/20201006/metadata.json"
+      },
+      "20210202": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient070/20210202/images.npz",
+        "metadata_path": "processed_image_arrays/Patient070/20210202/metadata.json"
+      },
+      "20210511": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient070/20210511/images.npz",
+        "metadata_path": "processed_image_arrays/Patient070/20210511/metadata.json"
+      },
+      "20220419": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient070/20220419/images.npz",
+        "metadata_path": "processed_image_arrays/Patient070/20220419/metadata.json"
+      },
+      "20221129": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient070/20221129/images.npz",
+        "metadata_path": "processed_image_arrays/Patient070/20221129/metadata.json"
+      },
+      "20230606": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient070/20230606/images.npz",
+        "metadata_path": "processed_image_arrays/Patient070/20230606/metadata.json"
+      },
+      "20230815": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient070/20230815/images.npz",
+        "metadata_path": "processed_image_arrays/Patient070/20230815/metadata.json"
+      },
+      "20240528": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient070/20240528/images.npz",
+        "metadata_path": "processed_image_arrays/Patient070/20240528/metadata.json"
+      },
+      "20240903": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient070/20240903/images.npz",
+        "metadata_path": "processed_image_arrays/Patient070/20240903/metadata.json"
+      }
+    },
+    "Patient071": {
+      "20231128": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient071/20231128/images.npz",
+        "metadata_path": "processed_image_arrays/Patient071/20231128/metadata.json"
+      },
+      "20240102": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient071/20240102/images.npz",
+        "metadata_path": "processed_image_arrays/Patient071/20240102/metadata.json"
+      },
+      "20241203": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient071/20241203/images.npz",
+        "metadata_path": "processed_image_arrays/Patient071/20241203/metadata.json"
+      }
+    },
+    "Patient072": {
+      "20240221": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient072/20240221/images.npz",
+        "metadata_path": "processed_image_arrays/Patient072/20240221/metadata.json"
+      },
+      "20240305": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient072/20240305/images.npz",
+        "metadata_path": "processed_image_arrays/Patient072/20240305/metadata.json"
+      }
+    },
+    "Patient073": {
+      "20250715": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient073/20250715/images.npz",
+        "metadata_path": "processed_image_arrays/Patient073/20250715/metadata.json"
+      }
+    },
+    "Patient074": {
+      "20240528": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient074/20240528/images.npz",
+        "metadata_path": "processed_image_arrays/Patient074/20240528/metadata.json"
+      }
+    },
+    "Patient075": {
+      "20230829": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient075/20230829/images.npz",
+        "metadata_path": "processed_image_arrays/Patient075/20230829/metadata.json"
+      }
+    },
+    "Patient076": {
+      "20240409": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient076/20240409/images.npz",
+        "metadata_path": "processed_image_arrays/Patient076/20240409/metadata.json"
+      },
+      "20240903": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient076/20240903/images.npz",
+        "metadata_path": "processed_image_arrays/Patient076/20240903/metadata.json"
+      },
+      "20250125": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient076/20250125/images.npz",
+        "metadata_path": "processed_image_arrays/Patient076/20250125/metadata.json"
+      },
+      "20250422": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient076/20250422/images.npz",
+        "metadata_path": "processed_image_arrays/Patient076/20250422/metadata.json"
+      }
+    },
+    "Patient077": {
+      "20240604": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient077/20240604/images.npz",
+        "metadata_path": "processed_image_arrays/Patient077/20240604/metadata.json"
+      },
+      "20250211": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient077/20250211/images.npz",
+        "metadata_path": "processed_image_arrays/Patient077/20250211/metadata.json"
+      }
+    },
+    "Patient078": {
+      "20240402": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient078/20240402/images.npz",
+        "metadata_path": "processed_image_arrays/Patient078/20240402/metadata.json"
+      }
+    },
+    "Patient079": {
+      "20240528": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient079/20240528/images.npz",
+        "metadata_path": "processed_image_arrays/Patient079/20240528/metadata.json"
+      }
+    },
+    "Patient080": {
+      "20230815": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient080/20230815/images.npz",
+        "metadata_path": "processed_image_arrays/Patient080/20230815/metadata.json"
+      },
+      "20230919": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient080/20230919/images.npz",
+        "metadata_path": "processed_image_arrays/Patient080/20230919/metadata.json"
+      },
+      "20231010": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient080/20231010/images.npz",
+        "metadata_path": "processed_image_arrays/Patient080/20231010/metadata.json"
+      },
+      "20231212": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient080/20231212/images.npz",
+        "metadata_path": "processed_image_arrays/Patient080/20231212/metadata.json"
+      },
+      "20240723": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient080/20240723/images.npz",
+        "metadata_path": "processed_image_arrays/Patient080/20240723/metadata.json"
+      },
+      "20250107": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient080/20250107/images.npz",
+        "metadata_path": "processed_image_arrays/Patient080/20250107/metadata.json"
+      },
+      "20250715": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient080/20250715/images.npz",
+        "metadata_path": "processed_image_arrays/Patient080/20250715/metadata.json"
+      }
+    },
+    "Patient081": {
+      "20230711": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient081/20230711/images.npz",
+        "metadata_path": "processed_image_arrays/Patient081/20230711/metadata.json"
+      },
+      "20241001": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient081/20241001/images.npz",
+        "metadata_path": "processed_image_arrays/Patient081/20241001/metadata.json"
+      },
+      "20250819": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient081/20250819/images.npz",
+        "metadata_path": "processed_image_arrays/Patient081/20250819/metadata.json"
+      }
+    },
+    "Patient082": {
+      "20231107": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient082/20231107/images.npz",
+        "metadata_path": "processed_image_arrays/Patient082/20231107/metadata.json"
+      },
+      "20250422": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient082/20250422/images.npz",
+        "metadata_path": "processed_image_arrays/Patient082/20250422/metadata.json"
+      }
+    },
+    "Patient083": {
+      "20201027": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20201027/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20201027/metadata.json"
+      },
+      "20210330": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20210330/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20210330/metadata.json"
+      },
+      "20210629": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20210629/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20210629/metadata.json"
+      },
+      "20210928": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20210928/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20210928/metadata.json"
+      },
+      "20220405": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient083/20220405/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20220405/metadata.json"
+      },
+      "20220705": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20220705/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20220705/metadata.json"
+      },
+      "20221004": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20221004/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20221004/metadata.json"
+      },
+      "20221229": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20221229/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20221229/metadata.json"
+      },
+      "20230411": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20230411/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20230411/metadata.json"
+      },
+      "20230815": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20230815/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20230815/metadata.json"
+      },
+      "20240109": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20240109/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20240109/metadata.json"
+      },
+      "20240611": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient083/20240611/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20240611/metadata.json"
+      },
+      "20250204": {
+        "num_images": 3,
+        "npz_path": "processed_image_arrays/Patient083/20250204/images.npz",
+        "metadata_path": "processed_image_arrays/Patient083/20250204/metadata.json"
+      }
+    },
+    "Patient084": {
+      "20240618": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient084/20240618/images.npz",
+        "metadata_path": "processed_image_arrays/Patient084/20240618/metadata.json"
+      }
+    },
+    "Patient085": {
+      "20240611": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient085/20240611/images.npz",
+        "metadata_path": "processed_image_arrays/Patient085/20240611/metadata.json"
+      },
+      "20240806": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient085/20240806/images.npz",
+        "metadata_path": "processed_image_arrays/Patient085/20240806/metadata.json"
+      },
+      "20241119": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient085/20241119/images.npz",
+        "metadata_path": "processed_image_arrays/Patient085/20241119/metadata.json"
+      },
+      "20250107": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient085/20250107/images.npz",
+        "metadata_path": "processed_image_arrays/Patient085/20250107/metadata.json"
+      },
+      "20250610": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient085/20250610/images.npz",
+        "metadata_path": "processed_image_arrays/Patient085/20250610/metadata.json"
+      },
+      "20250805": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient085/20250805/images.npz",
+        "metadata_path": "processed_image_arrays/Patient085/20250805/metadata.json"
+      }
+    },
+    "Patient086": {
+      "20210406": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20210406/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20210406/metadata.json"
+      },
+      "20210720": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20210720/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20210720/metadata.json"
+      },
+      "20211214": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20211214/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20211214/metadata.json"
+      },
+      "20220329": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20220329/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20220329/metadata.json"
+      },
+      "20220809": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20220809/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20220809/metadata.json"
+      },
+      "20221108": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20221108/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20221108/metadata.json"
+      },
+      "20231114": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20231114/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20231114/metadata.json"
+      },
+      "20240305": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20240305/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20240305/metadata.json"
+      },
+      "20241112": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20241112/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20241112/metadata.json"
+      },
+      "20250218": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20250218/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20250218/metadata.json"
+      },
+      "20250819": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient086/20250819/images.npz",
+        "metadata_path": "processed_image_arrays/Patient086/20250819/metadata.json"
+      }
+    },
+    "Patient087": {
+      "20211221": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient087/20211221/images.npz",
+        "metadata_path": "processed_image_arrays/Patient087/20211221/metadata.json"
+      },
+      "20220927": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient087/20220927/images.npz",
+        "metadata_path": "processed_image_arrays/Patient087/20220927/metadata.json"
+      },
+      "20230606": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient087/20230606/images.npz",
+        "metadata_path": "processed_image_arrays/Patient087/20230606/metadata.json"
+      },
+      "20231024": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient087/20231024/images.npz",
+        "metadata_path": "processed_image_arrays/Patient087/20231024/metadata.json"
+      },
+      "20240723": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient087/20240723/images.npz",
+        "metadata_path": "processed_image_arrays/Patient087/20240723/metadata.json"
+      },
+      "20241105": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient087/20241105/images.npz",
+        "metadata_path": "processed_image_arrays/Patient087/20241105/metadata.json"
+      },
+      "20250722": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient087/20250722/images.npz",
+        "metadata_path": "processed_image_arrays/Patient087/20250722/metadata.json"
+      }
+    },
+    "Patient088": {
+      "20241126": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient088/20241126/images.npz",
+        "metadata_path": "processed_image_arrays/Patient088/20241126/metadata.json"
+      },
+      "20250107": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient088/20250107/images.npz",
+        "metadata_path": "processed_image_arrays/Patient088/20250107/metadata.json"
+      },
+      "20250408": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient088/20250408/images.npz",
+        "metadata_path": "processed_image_arrays/Patient088/20250408/metadata.json"
+      },
+      "20250506": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient088/20250506/images.npz",
+        "metadata_path": "processed_image_arrays/Patient088/20250506/metadata.json"
+      },
+      "20250624": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient088/20250624/images.npz",
+        "metadata_path": "processed_image_arrays/Patient088/20250624/metadata.json"
+      },
+      "20250930": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient088/20250930/images.npz",
+        "metadata_path": "processed_image_arrays/Patient088/20250930/metadata.json"
+      }
+    },
+    "Patient089": {
+      "20241126": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient089/20241126/images.npz",
+        "metadata_path": "processed_image_arrays/Patient089/20241126/metadata.json"
+      },
+      "20250121": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient089/20250121/images.npz",
+        "metadata_path": "processed_image_arrays/Patient089/20250121/metadata.json"
+      },
+      "20250429": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient089/20250429/images.npz",
+        "metadata_path": "processed_image_arrays/Patient089/20250429/metadata.json"
+      }
+    },
+    "Patient090": {
+      "20250204": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient090/20250204/images.npz",
+        "metadata_path": "processed_image_arrays/Patient090/20250204/metadata.json"
+      }
+    },
+    "Patient091": {
+      "20250107": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient091/20250107/images.npz",
+        "metadata_path": "processed_image_arrays/Patient091/20250107/metadata.json"
+      },
+      "20250408": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient091/20250408/images.npz",
+        "metadata_path": "processed_image_arrays/Patient091/20250408/metadata.json"
+      },
+      "20250603": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient091/20250603/images.npz",
+        "metadata_path": "processed_image_arrays/Patient091/20250603/metadata.json"
+      }
+    },
+    "Patient092": {
+      "20250114": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient092/20250114/images.npz",
+        "metadata_path": "processed_image_arrays/Patient092/20250114/metadata.json"
+      },
+      "20250415": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient092/20250415/images.npz",
+        "metadata_path": "processed_image_arrays/Patient092/20250415/metadata.json"
+      },
+      "20250617": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient092/20250617/images.npz",
+        "metadata_path": "processed_image_arrays/Patient092/20250617/metadata.json"
+      },
+      "20250923": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient092/20250923/images.npz",
+        "metadata_path": "processed_image_arrays/Patient092/20250923/metadata.json"
+      }
+    },
+    "Patient093": {
+      "20250204": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient093/20250204/images.npz",
+        "metadata_path": "processed_image_arrays/Patient093/20250204/metadata.json"
+      },
+      "20250415": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient093/20250415/images.npz",
+        "metadata_path": "processed_image_arrays/Patient093/20250415/metadata.json"
+      },
+      "20250930": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient093/20250930/images.npz",
+        "metadata_path": "processed_image_arrays/Patient093/20250930/metadata.json"
+      }
+    },
+    "Patient095": {
+      "20240724": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient095/20240724/images.npz",
+        "metadata_path": "processed_image_arrays/Patient095/20240724/metadata.json"
+      },
+      "20241008": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient095/20241008/images.npz",
+        "metadata_path": "processed_image_arrays/Patient095/20241008/metadata.json"
+      },
+      "20241217": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient095/20241217/images.npz",
+        "metadata_path": "processed_image_arrays/Patient095/20241217/metadata.json"
+      },
+      "20250401": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient095/20250401/images.npz",
+        "metadata_path": "processed_image_arrays/Patient095/20250401/metadata.json"
+      },
+      "20250812": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient095/20250812/images.npz",
+        "metadata_path": "processed_image_arrays/Patient095/20250812/metadata.json"
+      }
+    },
+    "Patient096": {
+      "20241119": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient096/20241119/images.npz",
+        "metadata_path": "processed_image_arrays/Patient096/20241119/metadata.json"
+      },
+      "20250218": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient096/20250218/images.npz",
+        "metadata_path": "processed_image_arrays/Patient096/20250218/metadata.json"
+      },
+      "20250812": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient096/20250812/images.npz",
+        "metadata_path": "processed_image_arrays/Patient096/20250812/metadata.json"
+      }
+    },
+    "Patient097": {
+      "20250114": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient097/20250114/images.npz",
+        "metadata_path": "processed_image_arrays/Patient097/20250114/metadata.json"
+      },
+      "20250429": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient097/20250429/images.npz",
+        "metadata_path": "processed_image_arrays/Patient097/20250429/metadata.json"
+      },
+      "20250916": {
+        "num_images": 2,
+        "npz_path": "processed_image_arrays/Patient097/20250916/images.npz",
+        "metadata_path": "processed_image_arrays/Patient097/20250916/metadata.json"
+      }
+    },
+    "Patient098": {
+      "20240903": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient098/20240903/images.npz",
+        "metadata_path": "processed_image_arrays/Patient098/20240903/metadata.json"
+      }
+    },
+    "Patient099": {
+      "20250218": {
+        "num_images": 4,
+        "npz_path": "processed_image_arrays/Patient099/20250218/images.npz",
+        "metadata_path": "processed_image_arrays/Patient099/20250218/metadata.json"
+      }
+    }
+  }
+}

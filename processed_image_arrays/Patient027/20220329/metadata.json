@@ -1,0 +1,84 @@
+[
+  {
+    "filename": "Patient027_20220329_OD_FA_0000.png",
+    "eye_original": "OD",
+    "eye_standardized": "OD",
+    "modality": "FA",
+    "flipped_horizontal": false,
+    "shape": [
+      4000,
+      4000
+    ],
+    "dtype": "uint8",
+    "array_key": "img_0000"
+  },
+  {
+    "filename": "Patient027_20220329_OD_FA_0001.png",
+    "eye_original": "OD",
+    "eye_standardized": "OD",
+    "modality": "FA",
+    "flipped_horizontal": false,
+    "shape": [
+      4000,
+      4000,
+      3
+    ],
+    "dtype": "uint8",
+    "array_key": "img_0001"
+  },
+  {
+    "filename": "Patient027_20220329_OD_FP_0000.png",
+    "eye_original": "OD",
+    "eye_standardized": "OD",
+    "modality": "FP",
+    "flipped_horizontal": false,
+    "shape": [
+      4000,
+      4000,
+      3
+    ],
+    "dtype": "uint8",
+    "array_key": "img_0002"
+  },
+  {
+    "filename": "Patient027_20220329_OS_FA_0000.png",
+    "eye_original": "OS",
+    "eye_standardized": "OD",
+    "modality": "FA",
+    "flipped_horizontal": true,
+    "shape": [
+      4000,
+      4000
+    ],
+    "dtype": "uint8",
+    "array_key": "img_0003"
+  },
+  {
+    "filename": "Patient027_20220329_OS_FA_0001.png",
+    "eye_original": "OS",
+    "eye_standardized": "OD",
+    "modality": "FA",
+    "flipped_horizontal": true,
+    "shape": [
+      4000,
+      4000,
+      3
+    ],
+    "dtype": "uint8",
+    "array_key": "img_0004"
+  },
+  {
+    "filename": "Patient027_20220329_OS_FP_0000.png",
+    "eye_original": "OS",
+    "eye_standardized": "OD",
+    "modality": "FP",
+    "flipped_horizontal": true,
+    "shape": [
+      4000,
+      4000,
+      3
+    ],
+    "dtype": "uint8",
+    "array_key": "img_0005"
+  }
+]

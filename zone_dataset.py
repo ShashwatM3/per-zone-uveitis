@@ -11,6 +11,19 @@ from typing import Callable, Iterable
 from PIL import Image
 from torch.utils.data import Dataset
 
+# Spreadsheet / legacy table uses three severity tiers {0, 1, 2}. Training collapses
+# the two non-zero tiers into a single positive class for binary classification.
+MULTICLASS_ZONE_LABELS = frozenset({0, 1, 2})
+
+
+def zone_label_to_binary(raw_label: int) -> int:
+    """Map 0 -> 0 and 1 or 2 -> 1. Idempotent when raw_label is already 0 or 1."""
+    if raw_label not in MULTICLASS_ZONE_LABELS:
+        raise ValueError(
+            f"Zone_Label must be in {sorted(MULTICLASS_ZONE_LABELS)}, got {raw_label!r}"
+        )
+    return 0 if raw_label == 0 else 1
+
 
 @dataclass(frozen=True)
 class ZoneRecord:
@@ -31,12 +44,13 @@ def load_zone_records(csv_path: Path, data_root: Path) -> list[ZoneRecord]:
 
         for row in reader:
             image_rel = Path(str(row["Zone_Image"]).replace("\\", "/"))
+            raw_label = int(float(row["Zone_Label"]))
             records.append(
                 ZoneRecord(
                     patient_id=int(float(row["Patient_ID"])),
                     image_path=data_root / image_rel,
                     zone_number=int(float(row["Zone_Number"])),
-                    label=int(float(row["Zone_Label"])),
+                    label=zone_label_to_binary(raw_label),
                 )
             )
     return records

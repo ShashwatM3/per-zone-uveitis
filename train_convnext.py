@@ -28,7 +28,10 @@ IMAGENET_STD = (0.229, 0.224, 0.225)
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Train a ConvNeXt zone-label classifier from zone_training_table.csv."
+        description=(
+            "Train a ConvNeXt binary zone-label classifier from zone_training_table.csv "
+            "(Zone_Label 0 vs 1+2 merged to {0,1})."
+        )
     )
     parser.add_argument(
         "--csv",
@@ -62,7 +65,12 @@ def parse_args() -> argparse.Namespace:
         help="Class weighting used by CE weights or focal alpha.",
     )
     parser.add_argument("--focal-gamma", type=float, default=2.0)
-    parser.add_argument("--num-classes", type=int, default=3)
+    parser.add_argument(
+        "--num-classes",
+        type=int,
+        default=2,
+        help="Must be 2 for the binary zone task (default: 2).",
+    )
     parser.add_argument("--epochs", type=int, default=25)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--lr", type=float, default=3e-4)
@@ -227,6 +235,8 @@ def serializable_args(args: argparse.Namespace) -> dict[str, Any]:
 
 def main() -> int:
     args = parse_args()
+    if args.num_classes != 2:
+        raise SystemExit("This branch only supports binary classification; use --num-classes 2.")
     seed_everything(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

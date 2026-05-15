@@ -12,6 +12,11 @@ Behavior:
     each zone crop as a PNG, and appends rows to `zone_training_table.csv`.
 
 Table columns: Patient_ID, Zone_Image, Zone_Number, Zone_Label
+
+By default each Zone_Label is written in binary form: spreadsheet tiers 0, 1, and 2
+become 0, 1, and 1 respectively (classes 1 and 2 merged). Pass
+``--multiclass-zone-labels`` to write raw 0/1/2 instead; training still maps to
+binary when loading the CSV.
 """
 
 from __future__ import annotations
@@ -29,6 +34,7 @@ import numpy as np
 from PIL import Image
 
 from extract_zones import extract
+from zone_dataset import zone_label_to_binary
 
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp"}
@@ -183,6 +189,7 @@ def preprocess_dataset(
     data_dir: Path,
     output_dir: Path,
     annotations_xlsx: Optional[Path] = None,
+    binary_zone_labels: bool = True,
 ) -> Dict[str, object]:
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -192,6 +199,7 @@ def preprocess_dataset(
         "patients": {},
         "zone_table": None,
         "zone_table_stats": {},
+        "binary_zone_labels": binary_zone_labels,
     }
 
     label_index: Dict[Tuple[int, str, str, str], Tuple[int, ...]] = {}
@@ -280,12 +288,18 @@ def preprocess_dataset(
                                     zone_arr.astype(np.uint8), mode="RGBA"
                                 ).save(crop_path)
                                 zone_rel = rel_crop_dir / crop_name
+                                raw_zone_label = labels[zi - 1]
+                                zone_label = (
+                                    zone_label_to_binary(raw_zone_label)
+                                    if binary_zone_labels
+                                    else raw_zone_label
+                                )
                                 writer.writerow(
                                     [
                                         pid,
                                         str(zone_rel).replace("\\", "/"),
                                         zi,
-                                        labels[zi - 1],
+                                        zone_label,
                                     ]
                                 )
                                 zone_stats["zones_written"] += 1
@@ -348,6 +362,11 @@ def main() -> None:
         default=None,
         help="Path to annotations workbook (default: first *.xlsx under data-dir)",
     )
+    parser.add_argument(
+        "--multiclass-zone-labels",
+        action="store_true",
+        help="Write raw Zone_Label 0/1/2 from the spreadsheet instead of binary 0/1.",
+    )
     args = parser.parse_args()
 
     if not args.data_dir.exists():
@@ -357,7 +376,12 @@ def main() -> None:
     if xlsx_path is None:
         xlsx_path = find_default_xlsx(args.data_dir)
 
-    summary = preprocess_dataset(args.data_dir, args.output_dir, xlsx_path)
+    summary = preprocess_dataset(
+        args.data_dir,
+        args.output_dir,
+        xlsx_path,
+        binary_zone_labels=not args.multiclass_zone_labels,
+    )
     num_patients = len(summary["patients"])
     num_visits = sum(len(v) for v in summary["patients"].values())
     print(f"Done. Processed {num_patients} patients and {num_visits} visits.")

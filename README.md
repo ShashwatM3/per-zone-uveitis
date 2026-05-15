@@ -1,6 +1,6 @@
 # Per-Zone Uveitis Classification Pipeline
 
-This repository contains a deep learning pipeline for classifying retinal zones in fundus photography (FP) images. The pipeline handles data preprocessing, zone extraction, and model training using ConvNeXt with support for Focal Loss to address class imbalance.
+This repository contains a deep learning pipeline for classifying retinal zones in fundus photography (FP) images. On this branch the task is **binary**: spreadsheet severity tiers **1 and 2 are merged into one positive class** versus tier **0**. The pipeline handles preprocessing, zone extraction, and ConvNeXt training with weighted cross-entropy or focal loss for remaining class imbalance.
 
 ## Pipeline Overview
 
@@ -15,7 +15,7 @@ This stage converts raw patient data into a standardized format suitable for tra
     *   Standardizes images (e.g., horizontally flipping OS images to match the OD-axis convention).
     *   Saves visit-wise standardized arrays as `.npz` files.
     *   Matches images with labels from an annotations spreadsheet.
-    *   Calls `extract_zones.py` to generate zone crops and builds `zone_training_table.csv`.
+    *   Calls `extract_zones.py` to generate zone crops and builds `zone_training_table.csv` with **binary** `Zone_Label` values (0 vs 1) by default. Use `--multiclass-zone-labels` if you need raw 0/1/2 in the CSV; training still maps to binary on load.
 
 ### 2. Model Training Stage
 This stage uses the generated zone crops and labels to train a classifier.
@@ -29,7 +29,7 @@ This stage uses the generated zone crops and labels to train a classifier.
 *   **`train_convnext.py`**: The main training script.
     *   Uses a pretrained ConvNeXt-Tiny backbone.
     *   Supports toggling between `ce` (CrossEntropy) and `focal` loss via command-line arguments.
-    *   Tracks metrics including Accuracy, Balanced Accuracy, Macro-F1, and Confusion Matrices.
+    *   Two output logits (classes 0 and 1). Tracks Accuracy, Balanced Accuracy, Macro-F1, and a 2×2 confusion matrix.
     *   Saves the best model based on validation Macro-F1.
 
 ## Project Structure
@@ -66,6 +66,7 @@ python train_convnext.py \
   --csv processed_image_arrays/zone_training_table.csv \
   --data-root processed_image_arrays \
   --loss focal \
+  --epochs 50 \
   --output-dir runs/convnext_focal
 ```
 
@@ -75,6 +76,7 @@ python train_convnext.py \
   --csv processed_image_arrays/zone_training_table.csv \
   --data-root processed_image_arrays \
   --loss ce \
+  --epochs 50 \
   --output-dir runs/convnext_ce
 ```
 

@@ -8,7 +8,7 @@ from torch.nn import functional as F
 
 
 class FocalLoss(nn.Module):
-    """Multi-class focal loss for logits shaped [batch, num_classes]."""
+    """Focal loss for logits shaped [batch, num_classes] (binary or multi-class)."""
 
     def __init__(
         self,

@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-Validate that every Zone_Label in zone_training_table.csv is in {0, 1, 2}.
+Validate Zone_Label values in zone_training_table.csv for the binary pipeline.
+
+Accepts raw multiclass labels {0, 1, 2} (merged to binary at train time) or
+already-collapsed binary labels {0, 1}.
 
 Usage:
   python3 tests/check_zone_labels.py [--csv PATH]
@@ -14,10 +17,10 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
+from collections import Counter
 from pathlib import Path
 
-
-VALID_LABELS = frozenset({0, 1, 2})
+VALID_RAW = frozenset({0, 1, 2})
 
 
 def main() -> int:
@@ -35,7 +38,7 @@ def main() -> int:
         return 1
 
     bad_rows: list[tuple[int, str, object]] = []
-    data_rows = 0
+    counts: Counter[int] = Counter()
 
     with args.csv.open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -55,18 +58,25 @@ def main() -> int:
                 bad_rows.append((i, "empty Zone_Label", raw))
                 continue
             try:
-                # Accept "2", "2.0" from Excel re-exports, but only if value is integer 0/1/2
                 v = int(float(str(raw).strip()))
             except (TypeError, ValueError):
                 bad_rows.append((i, "not an integer", raw))
                 continue
-            if v not in VALID_LABELS:
+            if v not in VALID_RAW:
                 bad_rows.append((i, "not in {0,1,2}", v))
             else:
-                data_rows += 1
+                counts[v] += 1
 
     print(f"CSV: {args.csv.resolve()}")
-    print(f"Rows with valid Zone_Label (0/1/2): {data_rows}")
+    print(f"Rows with valid Zone_Label (each in {set(VALID_RAW)}): {sum(counts.values())}")
+    print(f"Per-tier counts: {dict(sorted(counts.items()))}")
+    merged = counts.get(1, 0) + counts.get(2, 0)
+    n = sum(counts.values())
+    if n:
+        print(
+            f"Binary view (0 vs 1+2): class0={counts.get(0, 0)} ({100 * counts.get(0, 0) / n:.1f}%), "
+            f"positive={merged} ({100 * merged / n:.1f}%)"
+        )
     print(f"Rows with invalid Zone_Label: {len(bad_rows)}")
 
     if bad_rows:
@@ -77,7 +87,7 @@ def main() -> int:
             print(f"  ... and {len(bad_rows) - 50} more")
         return 1
 
-    print("OK: all Zone_Label values are in {0, 1, 2}.")
+    print("OK: all Zone_Label values are valid for the binary pipeline.")
     return 0
 
 

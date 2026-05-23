@@ -29,8 +29,9 @@ This stage uses the generated zone crops and labels to train a classifier.
 *   **`train_convnext.py`**: The main training script.
     *   Uses a pretrained ConvNeXt-Tiny backbone.
     *   Supports toggling between `ce` (CrossEntropy) and `focal` loss via command-line arguments.
-    *   Two output logits (classes 0 and 1). Tracks Accuracy, Balanced Accuracy, Macro-F1, and a 2×2 confusion matrix.
+    *   Two output logits (classes 0 and 1). Tracks Accuracy, Balanced Accuracy, Macro-F1, per-class recall/specificity, and a 2×2 confusion matrix.
     *   Saves the best model based on validation Macro-F1.
+    *   Logs training, validation, and test metrics to [Weights & Biases](https://wandb.ai) by default (`--no-wandb` to disable).
 
 ## Project Structure
 
@@ -60,25 +61,56 @@ python pre_processing.py --data-dir ./data --output-dir ./processed_image_arrays
 ```
 
 ### 3. Train the Model
+
+Authenticate with W&B once (if you use cloud logging): `wandb login`.
+
+Quick smoke test with experiment tracking:
+
+```bash
+python train_convnext.py \
+  --csv processed_image_arrays/zone_training_table.csv \
+  --data-root processed_image_arrays \
+  --epochs 2 \
+  --wandb-project uveitis-per-zone \
+  --wandb-run-name smoke-test
+```
+
 Train a ConvNeXt classifier using Focal Loss:
+
 ```bash
 python train_convnext.py \
   --csv processed_image_arrays/zone_training_table.csv \
   --data-root processed_image_arrays \
   --loss focal \
   --epochs 50 \
-  --output-dir runs/convnext_focal
+  --output-dir runs/convnext_focal \
+  --wandb-project uveitis-per-zone \
+  --wandb-run-name convnext-focal
 ```
 
 To compare with standard Weighted CrossEntropy:
+
 ```bash
 python train_convnext.py \
   --csv processed_image_arrays/zone_training_table.csv \
   --data-root processed_image_arrays \
   --loss ce \
   --epochs 50 \
-  --output-dir runs/convnext_ce
+  --output-dir runs/convnext_ce \
+  --wandb-project uveitis-per-zone \
+  --wandb-run-name convnext-ce
 ```
 
+Disable W&B entirely (no `wandb` calls):
+
+```bash
+python train_convnext.py --no-wandb ...
+```
+
+**W&B flags:** `--wandb-project` (default: `uveitis-per-zone`), `--wandb-run-name` (optional), `--no-wandb`.
+
 ## Metrics and Evaluation
+
 Training results, including a `metrics.json` file and the `best.pt` checkpoint, are saved in the specified `--output-dir`. The pipeline focuses on **Macro-F1** and **Balanced Accuracy** to ensure fair evaluation across imbalanced zone labels.
+
+When W&B is enabled, each epoch logs train/val loss and accuracy, balanced accuracy, macro-F1, per-class F1/recall/specificity, and train–val loss gap. After training, test-set metrics and per-class ROC curves (with AUC) are logged to the same run.

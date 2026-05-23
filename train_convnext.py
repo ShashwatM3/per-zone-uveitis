@@ -7,7 +7,10 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import torch
+import wandb
+from sklearn.metrics import roc_curve, auc
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import models, transforms
@@ -81,6 +84,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--split-attempts", type=int, default=10_000)
     parser.add_argument("--freeze-backbone-epochs", type=int, default=3)
     parser.add_argument("--no-pretrained", action="store_true")
+    parser.add_argument("--wandb-project", type=str, default="uveitis-per-zone")
+    parser.add_argument("--wandb-run-name", type=str, default=None)
+    parser.add_argument("--no-wandb", action="store_true", help="Disable W&B logging.")
     return parser.parse_args()
 
 
@@ -153,6 +159,7 @@ def metrics_from_confusion(confusion: torch.Tensor) -> dict[str, Any]:
     per_class: dict[str, dict[str, float]] = {}
     f1_values: list[float] = []
     recall_values: list[float] = []
+    specificity_values: list[float] = []
 
     for class_idx in range(confusion.shape[0]):
         tp = confusion[class_idx, class_idx].item()
@@ -165,18 +172,27 @@ def metrics_from_confusion(confusion: torch.Tensor) -> dict[str, Any]:
             if (precision + recall)
             else 0.0
         )
+        tn = confusion.sum().item() - (
+            confusion[class_idx, :].sum().item()
+            + confusion[:, class_idx].sum().item()
+            - tp
+        )
+        specificity = tn / (tn + fp) if (tn + fp) else 0.0
         per_class[str(class_idx)] = {
             "precision": precision,
             "recall": recall,
             "f1": f1,
+            "specificity": specificity,
         }
         f1_values.append(f1)
         recall_values.append(recall)
+        specificity_values.append(specificity)
 
     return {
         "accuracy": correct / total if total else 0.0,
         "balanced_accuracy": sum(recall_values) / len(recall_values),
         "macro_f1": sum(f1_values) / len(f1_values),
+        "macro_specificity": sum(specificity_values) / len(specificity_values),
         "per_class": per_class,
         "confusion_matrix": confusion.tolist(),
     }
@@ -189,12 +205,14 @@ def run_epoch(
     device: torch.device,
     num_classes: int,
     optimizer: torch.optim.Optimizer | None = None,
-) -> dict[str, Any]:
+    return_probs: bool = False,
+) -> dict[str, Any] | tuple[dict[str, Any], list]:
     is_train = optimizer is not None
     model.train(is_train)
     total_loss = 0.0
     total_examples = 0
     confusion = torch.zeros(num_classes, num_classes, dtype=torch.long)
+    collected_probs: list = []
 
     grad_context = torch.enable_grad() if is_train else torch.inference_mode()
     with grad_context:
@@ -208,6 +226,11 @@ def run_epoch(
                 loss.backward()
                 optimizer.step()
 
+            if return_probs:
+                probs = torch.softmax(logits, dim=1).cpu().tolist()
+                for true_label, prob_vec in zip(labels.cpu().tolist(), probs):
+                    collected_probs.append((true_label, prob_vec))
+
             batch_size = labels.size(0)
             total_loss += loss.item() * batch_size
             total_examples += batch_size
@@ -215,6 +238,8 @@ def run_epoch(
 
     metrics = metrics_from_confusion(confusion)
     metrics["loss"] = total_loss / total_examples if total_examples else 0.0
+    if return_probs:
+        return metrics, collected_probs
     return metrics
 
 
@@ -238,6 +263,13 @@ def main() -> int:
     if args.num_classes != 2:
         raise SystemExit("This branch only supports binary classification; use --num-classes 2.")
     seed_everything(args.seed)
+    use_wandb = not args.no_wandb
+    if use_wandb:
+        wandb.init(
+            project=args.wandb_project,
+            name=args.wandb_run_name,
+            config=serializable_args(args),
+        )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     records = load_zone_records(args.csv, args.data_root)
@@ -319,6 +351,25 @@ def main() -> int:
             f"val_macro_f1={val_metrics['macro_f1']:.4f} "
             f"val_bal_acc={val_metrics['balanced_accuracy']:.4f}"
         )
+        if use_wandb:
+            wandb.log({
+                "epoch": epoch,
+                "train/loss": train_metrics["loss"],
+                "train/accuracy": train_metrics["accuracy"],
+                "train/balanced_accuracy": train_metrics["balanced_accuracy"],
+                "train/macro_f1": train_metrics["macro_f1"],
+                "val/loss": val_metrics["loss"],
+                "val/accuracy": val_metrics["accuracy"],
+                "val/balanced_accuracy": val_metrics["balanced_accuracy"],
+                "val/macro_f1": val_metrics["macro_f1"],
+                "val/f1_class_0": val_metrics["per_class"]["0"]["f1"],
+                "val/f1_class_1": val_metrics["per_class"]["1"]["f1"],
+                "val/recall_class_0": val_metrics["per_class"]["0"]["recall"],
+                "val/recall_class_1": val_metrics["per_class"]["1"]["recall"],
+                "val/specificity_class_0": val_metrics["per_class"]["0"]["specificity"],
+                "val/specificity_class_1": val_metrics["per_class"]["1"]["specificity"],
+                "diagnostics/train_val_loss_gap": val_metrics["loss"] - train_metrics["loss"],
+            })
 
         if val_metrics["macro_f1"] > best_macro_f1:
             best_macro_f1 = val_metrics["macro_f1"]
@@ -335,7 +386,9 @@ def main() -> int:
 
     checkpoint = torch.load(best_path, map_location=device)
     model.load_state_dict(checkpoint["model_state"])
-    test_metrics = run_epoch(model, test_loader, criterion, device, args.num_classes)
+    test_metrics, test_probs = run_epoch(
+        model, test_loader, criterion, device, args.num_classes, return_probs=True
+    )
 
     metrics = {
         "args": serializable_args(args),
@@ -353,6 +406,42 @@ def main() -> int:
     metrics_path = args.output_dir / "metrics.json"
     with metrics_path.open("w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2)
+
+    if use_wandb:
+        wandb.log({
+            "test/loss": test_metrics["loss"],
+            "test/accuracy": test_metrics["accuracy"],
+            "test/balanced_accuracy": test_metrics["balanced_accuracy"],
+            "test/macro_f1": test_metrics["macro_f1"],
+            "test/f1_class_0": test_metrics["per_class"]["0"]["f1"],
+            "test/f1_class_1": test_metrics["per_class"]["1"]["f1"],
+            "test/recall_class_0": test_metrics["per_class"]["0"]["recall"],
+            "test/recall_class_1": test_metrics["per_class"]["1"]["recall"],
+            "test/specificity_class_0": test_metrics["per_class"]["0"]["specificity"],
+            "test/specificity_class_1": test_metrics["per_class"]["1"]["specificity"],
+        })
+
+        true_labels = [y for y, _ in test_probs]
+        for class_idx in range(args.num_classes):
+            binary_labels = [1 if y == class_idx else 0 for y in true_labels]
+            scores = [p[class_idx] for _, p in test_probs]
+            fpr, tpr, _ = roc_curve(binary_labels, scores)
+            roc_auc = auc(fpr, tpr)
+            wandb.log({f"test/roc_auc_class_{class_idx}": roc_auc})
+            roc_table = wandb.Table(
+                data=list(zip(fpr.tolist(), tpr.tolist())),
+                columns=["FPR", "TPR"],
+            )
+            wandb.log({
+                f"test/roc_curve_class_{class_idx}": wandb.plot.line(
+                    roc_table,
+                    "FPR",
+                    "TPR",
+                    title=f"ROC Curve — Class {class_idx} (AUC={roc_auc:.3f})",
+                )
+            })
+
+        wandb.finish()
 
     print(f"Best checkpoint: {best_path}")
     print(f"Metrics: {metrics_path}")

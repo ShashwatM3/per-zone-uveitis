@@ -1,4 +1,6 @@
 numpy
+wandb
+scikit-learn
 pillow
 opencv-python
 openpyxl

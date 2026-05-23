@@ -1533,5 +1533,13 @@
         "metadata_path": "processed_image_arrays/Patient099/20250218/metadata.json"
       }
     }
-  }
+  },
+  "zone_table": "/home/shashwat/per-zone-uveitis/processed_image_arrays/zone_training_table.csv",
+  "zone_table_stats": {
+    "fp_matched": 436,
+    "fp_unmatched": 33,
+    "zones_written": 4360,
+    "extract_errors": 33
+  },
+  "annotations_xlsx": "/home/shashwat/convnext-implementation/Sample 2.5.2026/UWF_FP_Annotations_2.8.2026 Names removed.xlsx"
 }

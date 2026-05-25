@@ -41,19 +41,6 @@
     "array_key": "img_0002"
   },
   {
-    "filename": "Patient040_20200707_OS_FA_0000.png",
-    "eye_original": "OS",
-    "eye_standardized": "OD",
-    "modality": "FA",
-    "flipped_horizontal": true,
-    "shape": [
-      4000,
-      4000
-    ],
-    "dtype": "uint8",
-    "array_key": "img_0003"
-  },
-  {
     "filename": "Patient040_20200707_OS_FA_0001.png",
     "eye_original": "OS",
     "eye_standardized": "OD",
@@ -65,7 +52,7 @@
       3
     ],
     "dtype": "uint8",
-    "array_key": "img_0004"
+    "array_key": "img_0003"
   },
   {
     "filename": "Patient040_20200707_OS_FP_0000.png",
@@ -79,6 +66,6 @@
       3
     ],
     "dtype": "uint8",
-    "array_key": "img_0005"
+    "array_key": "img_0004"
   }
 ]

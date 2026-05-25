@@ -1,0 +1,76 @@
+/home/shashwat/per-zone-uveitis/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:187: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12020). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+Device: cpu
+Loss: focal class_weighting=inverse
+Freeze policy: full (freeze_epochs=3) | Scheduler: cosine | Head LR: 0.0001 | Backbone LR: 1e-05
+Split: {"train": [11, 12, 13, 15, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 29, 33, 34, 36, 37, 38, 40, 43, 44, 45, 47, 48, 49, 52, 54, 55, 56, 57, 59, 61, 63, 64, 65, 66, 67, 68, 70, 71, 72, 74, 75, 76, 78, 79, 81, 83, 84, 85, 86, 88, 89, 90, 91, 93, 95, 97], "val": [16, 25, 31, 39, 41, 46, 50, 58, 60, 62, 77, 92, 98], "test": [10, 14, 28, 30, 35, 42, 69, 73, 80, 82, 87, 96, 99]}
+epoch=001 train_loss=0.1849 val_loss=0.1981 val_macro_f1=0.4617 val_bal_acc=0.4784 lr_backbone=1.00e-05 lr_head=1.00e-04
+epoch=001 val/per_class={'0': {'precision': 0.4954954954954955, 'recall': 0.3264094955489614, 'f1': 0.39355992844364934, 'specificity': 0.6303630363036303}, '1': {'precision': 0.4569377990430622, 'recall': 0.6303630363036303, 'f1': 0.5298196948682385, 'specificity': 0.3264094955489614}}
+epoch=002 train_loss=0.1763 val_loss=0.1933 val_macro_f1=0.4656 val_bal_acc=0.4656 lr_backbone=9.99e-06 lr_head=9.99e-05
+epoch=002 val/per_class={'0': {'precision': 0.4940828402366864, 'recall': 0.49554896142433236, 'f1': 0.4948148148148148, 'specificity': 0.43564356435643564}, '1': {'precision': 0.4370860927152318, 'recall': 0.43564356435643564, 'f1': 0.4363636363636364, 'specificity': 0.49554896142433236}}
+epoch=003 train_loss=0.1718 val_loss=0.1957 val_macro_f1=0.4485 val_bal_acc=0.4660 lr_backbone=9.96e-06 lr_head=9.96e-05
+epoch=003 val/per_class={'0': {'precision': 0.4772727272727273, 'recall': 0.3115727002967359, 'f1': 0.3770197486535009, 'specificity': 0.6204620462046204}, '1': {'precision': 0.44761904761904764, 'recall': 0.6204620462046204, 'f1': 0.5200553250345782, 'specificity': 0.3115727002967359}}
+epoch=004 train_loss=0.1676 val_loss=0.2025 val_macro_f1=0.4674 val_bal_acc=0.4751 lr_backbone=9.92e-06 lr_head=9.91e-05
+epoch=004 val/per_class={'0': {'precision': 0.5072815533980582, 'recall': 0.6201780415430267, 'f1': 0.5580774365821095, 'specificity': 0.33003300330033003}, '1': {'precision': 0.43859649122807015, 'recall': 0.33003300330033003, 'f1': 0.37664783427495285, 'specificity': 0.6201780415430267}}
+epoch=005 train_loss=0.1604 val_loss=0.2056 val_macro_f1=0.4559 val_bal_acc=0.4589 lr_backbone=9.86e-06 lr_head=9.84e-05
+epoch=005 val/per_class={'0': {'precision': 0.4808362369337979, 'recall': 0.4094955489614243, 'f1': 0.4423076923076923, 'specificity': 0.5082508250825083}, '1': {'precision': 0.43626062322946174, 'recall': 0.5082508250825083, 'f1': 0.4695121951219512, 'specificity': 0.4094955489614243}}
+epoch=006 train_loss=0.1519 val_loss=0.2167 val_macro_f1=0.4703 val_bal_acc=0.4881 lr_backbone=9.78e-06 lr_head=9.76e-05
+epoch=006 val/per_class={'0': {'precision': 0.5091743119266054, 'recall': 0.3293768545994065, 'f1': 0.39999999999999997, 'specificity': 0.6468646864686468}, '1': {'precision': 0.46445497630331756, 'recall': 0.6468646864686468, 'f1': 0.5406896551724139, 'specificity': 0.3293768545994065}}
+epoch=007 train_loss=0.1413 val_loss=0.2324 val_macro_f1=0.4416 val_bal_acc=0.4556 lr_backbone=9.68e-06 lr_head=9.65e-05
+epoch=007 val/per_class={'0': {'precision': 0.46551724137931033, 'recall': 0.32047477744807124, 'f1': 0.37961335676625657, 'specificity': 0.5907590759075908}, '1': {'precision': 0.4387254901960784, 'recall': 0.5907590759075908, 'f1': 0.5035161744022503, 'specificity': 0.32047477744807124}}
+epoch=008 train_loss=0.1324 val_loss=0.2366 val_macro_f1=0.4588 val_bal_acc=0.4609 lr_backbone=9.57e-06 lr_head=9.53e-05
+epoch=008 val/per_class={'0': {'precision': 0.49333333333333335, 'recall': 0.5489614243323442, 'f1': 0.5196629213483146, 'specificity': 0.37293729372937295}, '1': {'precision': 0.42641509433962266, 'recall': 0.37293729372937295, 'f1': 0.397887323943662, 'specificity': 0.5489614243323442}}
+epoch=009 train_loss=0.1245 val_loss=0.2508 val_macro_f1=0.4801 val_bal_acc=0.4809 lr_backbone=9.44e-06 lr_head=9.39e-05
+epoch=009 val/per_class={'0': {'precision': 0.5096952908587258, 'recall': 0.5459940652818991, 'f1': 0.5272206303724929, 'specificity': 0.4158415841584158}, '1': {'precision': 0.45161290322580644, 'recall': 0.4158415841584158, 'f1': 0.43298969072164945, 'specificity': 0.5459940652818991}}
+epoch=010 train_loss=0.1155 val_loss=0.2675 val_macro_f1=0.4677 val_bal_acc=0.4724 lr_backbone=9.30e-06 lr_head=9.23e-05
+epoch=010 val/per_class={'0': {'precision': 0.49454545454545457, 'recall': 0.4035608308605341, 'f1': 0.4444444444444444, 'specificity': 0.5412541254125413}, '1': {'precision': 0.44931506849315067, 'recall': 0.5412541254125413, 'f1': 0.49101796407185627, 'specificity': 0.4035608308605341}}
+epoch=011 train_loss=0.1074 val_loss=0.2677 val_macro_f1=0.4765 val_bal_acc=0.4825 lr_backbone=9.14e-06 lr_head=9.05e-05
+epoch=011 val/per_class={'0': {'precision': 0.5056179775280899, 'recall': 0.40059347181008903, 'f1': 0.4470198675496689, 'specificity': 0.5643564356435643}, '1': {'precision': 0.4584450402144772, 'recall': 0.5643564356435643, 'f1': 0.5059171597633135, 'specificity': 0.40059347181008903}}
+epoch=012 train_loss=0.0999 val_loss=0.2957 val_macro_f1=0.5082 val_bal_acc=0.5090 lr_backbone=8.97e-06 lr_head=8.86e-05
+epoch=012 val/per_class={'0': {'precision': 0.5344352617079889, 'recall': 0.5756676557863502, 'f1': 0.5542857142857143, 'specificity': 0.44224422442244227}, '1': {'precision': 0.48375451263537905, 'recall': 0.44224422442244227, 'f1': 0.46206896551724136, 'specificity': 0.5756676557863502}}
+epoch=013 train_loss=0.0912 val_loss=0.3129 val_macro_f1=0.4990 val_bal_acc=0.5022 lr_backbone=8.78e-06 lr_head=8.66e-05
+epoch=013 val/per_class={'0': {'precision': 0.5283505154639175, 'recall': 0.6083086053412463, 'f1': 0.5655172413793103, 'specificity': 0.39603960396039606}, '1': {'precision': 0.47619047619047616, 'recall': 0.39603960396039606, 'f1': 0.43243243243243246, 'specificity': 0.6083086053412463}}
+epoch=014 train_loss=0.0856 val_loss=0.3381 val_macro_f1=0.4672 val_bal_acc=0.4688 lr_backbone=8.58e-06 lr_head=8.44e-05
+epoch=014 val/per_class={'0': {'precision': 0.49333333333333335, 'recall': 0.4391691394658754, 'f1': 0.4646781789638933, 'specificity': 0.49834983498349833}, '1': {'precision': 0.4441176470588235, 'recall': 0.49834983498349833, 'f1': 0.46967340590979784, 'specificity': 0.4391691394658754}}
+epoch=015 train_loss=0.0795 val_loss=0.3558 val_macro_f1=0.4752 val_bal_acc=0.4807 lr_backbone=8.37e-06 lr_head=8.21e-05
+epoch=015 val/per_class={'0': {'precision': 0.5112219451371571, 'recall': 0.6083086053412463, 'f1': 0.5555555555555556, 'specificity': 0.35313531353135313}, '1': {'precision': 0.4476987447698745, 'recall': 0.35313531353135313, 'f1': 0.3948339483394834, 'specificity': 0.6083086053412463}}
+epoch=016 train_loss=0.0763 val_loss=0.3662 val_macro_f1=0.4698 val_bal_acc=0.4704 lr_backbone=8.15e-06 lr_head=7.96e-05
+epoch=016 val/per_class={'0': {'precision': 0.5, 'recall': 0.5281899109792285, 'f1': 0.5137085137085137, 'specificity': 0.41254125412541254}, '1': {'precision': 0.44014084507042256, 'recall': 0.41254125412541254, 'f1': 0.4258943781942079, 'specificity': 0.5281899109792285}}
+Traceback (most recent call last):
+  File "/home/shashwat/per-zone-uveitis/train_convnext.py", line 637, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "/home/shashwat/per-zone-uveitis/train_convnext.py", line 502, in main
+    train_metrics = run_epoch(
+        model,
+    ...<5 lines>...
+        grad_clip_norm=args.grad_clip_norm,
+    )
+  File "/home/shashwat/per-zone-uveitis/train_convnext.py", line 378, in run_epoch
+    loss.backward()
+    ~~~~~~~~~~~~~^^
+  File "/home/shashwat/per-zone-uveitis/.venv/lib/python3.13/site-packages/torch/_tensor.py", line 631, in backward
+    torch.autograd.backward(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        self, gradient, retain_graph, create_graph, inputs=inputs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/shashwat/per-zone-uveitis/.venv/lib/python3.13/site-packages/torch/autograd/__init__.py", line 379, in backward
+    _engine_run_backward(
+    ~~~~~~~~~~~~~~~~~~~~^
+        tensors,
+        ^^^^^^^^
+    ...<5 lines>...
+        accumulate_grad=True,
+        ^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/shashwat/per-zone-uveitis/.venv/lib/python3.13/site-packages/torch/autograd/graph.py", line 882, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        t_outputs, *args, **kwargs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )  # Calls into the C++ engine to run the backward pass
+    ^
+KeyboardInterrupt

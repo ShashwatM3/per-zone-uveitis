@@ -1,0 +1,21 @@
+2026-05-25 06:58:23,208 INFO    MainThread:112089 [wandb_setup.py:_flush():81] Current SDK version is 0.27.0
+2026-05-25 06:58:23,208 INFO    MainThread:112089 [wandb_setup.py:_flush():81] Configure stats pid to 112089
+2026-05-25 06:58:23,208 INFO    MainThread:112089 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-05-25 06:58:23,208 INFO    MainThread:112089 [wandb_init.py:setup_run_log_directory():723] Logging user logs to /home/shashwat/per-zone-uveitis/wandb/run-20260525_065823-llxc3y5w/logs/debug.log
+2026-05-25 06:58:23,209 INFO    MainThread:112089 [wandb_init.py:setup_run_log_directory():724] Logging internal logs to /home/shashwat/per-zone-uveitis/wandb/run-20260525_065823-llxc3y5w/logs/debug-internal.log
+2026-05-25 06:58:23,209 INFO    MainThread:112089 [wandb_init.py:init():851] calling init triggers
+2026-05-25 06:58:23,209 INFO    MainThread:112089 [wandb_init.py:init():856] wandb.init called with sweep_config: {}
+config: {'csv': 'processed_image_arrays/zone_training_table.csv', 'data_root': 'processed_image_arrays', 'output_dir': 'runs/convnext_focal', 'split_json': None, 'loss': 'focal', 'class_weighting': 'inverse', 'focal_gamma': 2.0, 'num_classes': 2, 'epochs': 50, 'batch_size': 16, 'lr': 0.0001, 'backbone_lr_scale': 0.1, 'weight_decay': 0.0001, 'num_workers': 2, 'image_size': 224, 'seed': 13, 'split_attempts': 10000, 'freeze_backbone_epochs': 3, 'freeze_policy': 'full', 'scheduler': 'cosine', 'scheduler_min_lr_scale': 0.01, 'scheduler_patience': 3, 'scheduler_factor': 0.5, 'grad_clip_norm': 1.0, 'no_pretrained': False, 'wandb_project': 'uveitis-per-zone', 'wandb_run_name': 'convnext-focal', 'no_wandb': False, '_wandb': {}}
+2026-05-25 06:58:23,209 INFO    MainThread:112089 [wandb_init.py:init():899] starting backend
+2026-05-25 06:58:23,423 INFO    MainThread:112089 [wandb_init.py:init():914] sending inform_init request
+2026-05-25 06:58:23,655 INFO    MainThread:112089 [wandb_init.py:init():919] backend started and connected
+2026-05-25 06:58:23,675 INFO    MainThread:112089 [wandb_init.py:init():989] updated telemetry
+2026-05-25 06:58:23,682 INFO    MainThread:112089 [wandb_init.py:init():1012] communicating run to backend with 90.0 second timeout
+2026-05-25 06:58:23,985 INFO    MainThread:112089 [wandb_init.py:init():1057] starting run threads in backend
+2026-05-25 06:58:24,035 INFO    MainThread:112089 [wandb_run.py:_console_start():2509] atexit reg
+2026-05-25 06:58:24,035 INFO    MainThread:112089 [wandb_run.py:_redirect():2359] redirect: wrap_raw
+2026-05-25 06:58:24,035 INFO    MainThread:112089 [wandb_run.py:_redirect():2428] Wrapping output streams.
+2026-05-25 06:58:24,035 INFO    MainThread:112089 [wandb_run.py:_redirect():2451] Redirects installed.
+2026-05-25 06:58:24,038 INFO    MainThread:112089 [wandb_init.py:init():1095] run started, returning control to user process
+2026-05-25 08:23:50,103 INFO    wandb-AsyncioManager-main:112089 [service_client.py:_forward_responses():122] Reached EOF.
+2026-05-25 08:23:50,103 INFO    wandb-AsyncioManager-main:112089 [mailbox.py:close():154] Closing mailbox, abandoning 1 handles.

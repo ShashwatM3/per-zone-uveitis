@@ -7,7 +7,6 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import torch
 import wandb
 from sklearn.metrics import roc_curve, auc
@@ -75,14 +74,27 @@ def parse_args() -> argparse.Namespace:
         help="Must be 2 for the binary zone task (default: 2).",
     )
     parser.add_argument("--epochs", type=int, default=25)
-    parser.add_argument("--batch-size", type=int, default=16)
-    parser.add_argument("--lr", type=float, default=3e-4)
+    parser.add_argument("--batch-size", type=int, default=32)
+    parser.add_argument(
+        "--lr",
+        type=float,
+        default=1e-4,
+        help="Classifier-head learning rate. Backbone is trained at lr * 0.1.",
+    )
     parser.add_argument("--weight-decay", type=float, default=1e-4)
-    parser.add_argument("--num-workers", type=int, default=2)
+    parser.add_argument("--num-workers", type=int, default=8)
     parser.add_argument("--image-size", type=int, default=224)
     parser.add_argument("--seed", type=int, default=13)
     parser.add_argument("--split-attempts", type=int, default=10_000)
-    parser.add_argument("--freeze-backbone-epochs", type=int, default=3)
+    parser.add_argument(
+        "--grad-clip-norm",
+        type=float,
+        default=1.0,
+        help=(
+            "Max global gradient norm passed to clip_grad_norm_. Set to 0 or "
+            "negative to disable clipping (default: 1.0)."
+        ),
+    )
     parser.add_argument("--no-pretrained", action="store_true")
     parser.add_argument("--wandb-project", type=str, default="uveitis-per-zone")
     parser.add_argument("--wandb-run-name", type=str, default=None)
@@ -96,29 +108,27 @@ def seed_everything(seed: int) -> None:
 
 
 def build_transforms(image_size: int) -> tuple[transforms.Compose, transforms.Compose]:
-    train_transform = transforms.Compose(
-        [
-            transforms.RandomResizedCrop(
-                image_size,
-                scale=(0.85, 1.0),
-                interpolation=transforms.InterpolationMode.BICUBIC,
-            ),
-            transforms.RandomRotation(10),
-            transforms.ColorJitter(brightness=0.08, contrast=0.08, saturation=0.05),
-            transforms.ToTensor(),
-            transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
-        ]
-    )
-    eval_transform = transforms.Compose(
-        [
-            transforms.Resize(
-                (image_size, image_size),
-                interpolation=transforms.InterpolationMode.BICUBIC,
-            ),
-            transforms.ToTensor(),
-            transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
-        ]
-    )
+    train_transform = transforms.Compose([
+        transforms.RandomResizedCrop(
+            image_size, scale=(0.7, 1.0),
+            interpolation=transforms.InterpolationMode.BICUBIC,
+        ),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomVerticalFlip(),
+        transforms.RandomRotation(30),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.05),
+        transforms.ToTensor(),
+        transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
+        transforms.RandomErasing(p=0.2),
+    ])
+    eval_transform = transforms.Compose([
+        transforms.Resize(
+            (image_size, image_size),
+            interpolation=transforms.InterpolationMode.BICUBIC,
+        ),
+        transforms.ToTensor(),
+        transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
+    ])
     return train_transform, eval_transform
 
 
@@ -126,15 +136,11 @@ def build_model(num_classes: int, pretrained: bool) -> nn.Module:
     weights = models.ConvNeXt_Tiny_Weights.DEFAULT if pretrained else None
     model = models.convnext_tiny(weights=weights)
     in_features = model.classifier[-1].in_features
-    model.classifier[-1] = nn.Linear(in_features, num_classes)
+    model.classifier[-1] = nn.Sequential(
+        nn.Dropout(p=0.3),
+        nn.Linear(in_features, num_classes),
+    )
     return model
-
-
-def set_backbone_trainable(model: nn.Module, trainable: bool) -> None:
-    for parameter in model.parameters():
-        parameter.requires_grad = trainable
-    for parameter in model.classifier.parameters():
-        parameter.requires_grad = True
 
 
 def batch_to_device(batch: dict[str, Any], device: torch.device) -> tuple[torch.Tensor, torch.Tensor]:
@@ -206,6 +212,7 @@ def run_epoch(
     num_classes: int,
     optimizer: torch.optim.Optimizer | None = None,
     return_probs: bool = False,
+    grad_clip_norm: float | None = None,
 ) -> dict[str, Any] | tuple[dict[str, Any], list]:
     is_train = optimizer is not None
     model.train(is_train)
@@ -224,6 +231,10 @@ def run_epoch(
             if is_train:
                 optimizer.zero_grad(set_to_none=True)
                 loss.backward()
+                if grad_clip_norm is not None and grad_clip_norm > 0:
+                    torch.nn.utils.clip_grad_norm_(
+                        model.parameters(), max_norm=grad_clip_norm
+                    )
                 optimizer.step()
 
             if return_probs:
@@ -316,9 +327,14 @@ def main() -> int:
         focal_gamma=args.focal_gamma,
     )
     optimizer = torch.optim.AdamW(
-        model.parameters(),
-        lr=args.lr,
+        [
+            {"params": model.features.parameters(), "lr": args.lr * 0.1, "name": "backbone"},
+            {"params": model.classifier.parameters(), "lr": args.lr, "name": "classifier"},
+        ],
         weight_decay=args.weight_decay,
+    )
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+        optimizer, T_max=args.epochs, eta_min=1e-7
     )
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
@@ -328,10 +344,17 @@ def main() -> int:
 
     print(f"Device: {device}")
     print(f"Loss: {args.loss} class_weighting={args.class_weighting}")
+    print(
+        f"Scheduler: cosine | "
+        f"Head LR: {args.lr} | Backbone LR: {args.lr * 0.1} | "
+        f"grad_clip_norm: {args.grad_clip_norm}"
+    )
     print(f"Split: {json.dumps(split)}")
 
+    patience = 8
+    no_improve_count = 0
+
     for epoch in range(1, args.epochs + 1):
-        set_backbone_trainable(model, epoch > args.freeze_backbone_epochs)
         train_metrics = run_epoch(
             model,
             train_loader,
@@ -339,20 +362,28 @@ def main() -> int:
             device,
             args.num_classes,
             optimizer,
+            grad_clip_norm=args.grad_clip_norm,
         )
         val_metrics = run_epoch(model, val_loader, criterion, device, args.num_classes)
         row = {"epoch": epoch, "train": train_metrics, "val": val_metrics}
         history.append(row)
 
+        group_lrs = {
+            group.get("name", f"group_{idx}"): group["lr"]
+            for idx, group in enumerate(optimizer.param_groups)
+        }
+        lr_summary = " ".join(f"lr_{name}={lr:.2e}" for name, lr in group_lrs.items())
         print(
             f"epoch={epoch:03d} "
             f"train_loss={train_metrics['loss']:.4f} "
             f"val_loss={val_metrics['loss']:.4f} "
             f"val_macro_f1={val_metrics['macro_f1']:.4f} "
-            f"val_bal_acc={val_metrics['balanced_accuracy']:.4f}"
+            f"val_bal_acc={val_metrics['balanced_accuracy']:.4f} "
+            f"{lr_summary}"
         )
+        print(f"epoch={epoch:03d} val/per_class={val_metrics['per_class']}")
         if use_wandb:
-            wandb.log({
+            log_payload = {
                 "epoch": epoch,
                 "train/loss": train_metrics["loss"],
                 "train/accuracy": train_metrics["accuracy"],
@@ -369,9 +400,15 @@ def main() -> int:
                 "val/specificity_class_0": val_metrics["per_class"]["0"]["specificity"],
                 "val/specificity_class_1": val_metrics["per_class"]["1"]["specificity"],
                 "diagnostics/train_val_loss_gap": val_metrics["loss"] - train_metrics["loss"],
-            })
+            }
+            for name, lr in group_lrs.items():
+                log_payload[f"optim/lr_{name}"] = lr
+            wandb.log(log_payload)
+
+        scheduler.step()
 
         if val_metrics["macro_f1"] > best_macro_f1:
+            no_improve_count = 0
             best_macro_f1 = val_metrics["macro_f1"]
             torch.save(
                 {
@@ -383,6 +420,11 @@ def main() -> int:
                 },
                 best_path,
             )
+        else:
+            no_improve_count += 1
+            if no_improve_count >= patience:
+                print(f"Early stopping at epoch {epoch}")
+                break
 
     checkpoint = torch.load(best_path, map_location=device)
     model.load_state_dict(checkpoint["model_state"])

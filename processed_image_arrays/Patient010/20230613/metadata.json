@@ -25,19 +25,5 @@
     ],
     "dtype": "uint8",
     "array_key": "img_0001"
-  },
-  {
-    "filename": "Patient010_20230613_OD_FP_0000.png",
-    "eye_original": "OD",
-    "eye_standardized": "OD",
-    "modality": "FP",
-    "flipped_horizontal": false,
-    "shape": [
-      4000,
-      4000,
-      3
-    ],
-    "dtype": "uint8",
-    "array_key": "img_0002"
   }
 ]

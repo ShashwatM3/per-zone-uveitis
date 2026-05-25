@@ -1,0 +1,26 @@
+2026-05-24 17:24:07,548 INFO    MainThread:21067 [wandb_setup.py:_flush():81] Current SDK version is 0.27.0
+2026-05-24 17:24:07,548 INFO    MainThread:21067 [wandb_setup.py:_flush():81] Configure stats pid to 21067
+2026-05-24 17:24:07,548 INFO    MainThread:21067 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-05-24 17:24:07,549 INFO    MainThread:21067 [wandb_init.py:setup_run_log_directory():723] Logging user logs to /home/shashwat/per-zone-uveitis/wandb/run-20260524_172407-nfa6pssf/logs/debug.log
+2026-05-24 17:24:07,549 INFO    MainThread:21067 [wandb_init.py:setup_run_log_directory():724] Logging internal logs to /home/shashwat/per-zone-uveitis/wandb/run-20260524_172407-nfa6pssf/logs/debug-internal.log
+2026-05-24 17:24:07,549 INFO    MainThread:21067 [wandb_init.py:init():851] calling init triggers
+2026-05-24 17:24:07,549 INFO    MainThread:21067 [wandb_init.py:init():856] wandb.init called with sweep_config: {}
+config: {'csv': 'processed_image_arrays/zone_training_table.csv', 'data_root': 'processed_image_arrays', 'output_dir': 'runs/convnext_focal', 'split_json': None, 'loss': 'focal', 'class_weighting': 'inverse', 'focal_gamma': 2.0, 'num_classes': 2, 'epochs': 50, 'batch_size': 16, 'lr': 0.0003, 'weight_decay': 0.0001, 'num_workers': 2, 'image_size': 224, 'seed': 13, 'split_attempts': 10000, 'freeze_backbone_epochs': 3, 'no_pretrained': False, 'wandb_project': 'uveitis-per-zone', 'wandb_run_name': 'convnext-focal', 'no_wandb': False, '_wandb': {}}
+2026-05-24 17:24:07,549 INFO    MainThread:21067 [wandb_init.py:init():899] starting backend
+2026-05-24 17:24:07,761 INFO    MainThread:21067 [wandb_init.py:init():914] sending inform_init request
+2026-05-24 17:24:07,984 INFO    MainThread:21067 [wandb_init.py:init():919] backend started and connected
+2026-05-24 17:24:07,999 INFO    MainThread:21067 [wandb_init.py:init():989] updated telemetry
+2026-05-24 17:24:08,005 INFO    MainThread:21067 [wandb_init.py:init():1012] communicating run to backend with 90.0 second timeout
+2026-05-24 17:24:08,284 INFO    MainThread:21067 [wandb_init.py:init():1057] starting run threads in backend
+2026-05-24 17:24:08,326 INFO    MainThread:21067 [wandb_run.py:_console_start():2509] atexit reg
+2026-05-24 17:24:08,326 INFO    MainThread:21067 [wandb_run.py:_redirect():2359] redirect: wrap_raw
+2026-05-24 17:24:08,326 INFO    MainThread:21067 [wandb_run.py:_redirect():2428] Wrapping output streams.
+2026-05-24 17:24:08,326 INFO    MainThread:21067 [wandb_run.py:_redirect():2451] Redirects installed.
+2026-05-24 17:24:08,328 INFO    MainThread:21067 [wandb_init.py:init():1095] run started, returning control to user process
+2026-05-24 20:11:50,907 INFO    MainThread:21067 [wandb_run.py:_config_callback():1332] config_cb ('_wandb', 'visualize', 'test/roc_curve_class_0') {'panel_type': 'Vega2', 'panel_config': {'panelDefId': 'wandb/line/v0', 'fieldSettings': {'x': 'FPR', 'y': 'TPR', 'stroke': None}, 'stringSettings': {'title': 'ROC Curve — Class 0 (AUC=0.532)'}, 'transform': {'name': 'tableWithLeafColNames'}, 'userQuery': {'queryFields': [{'name': 'runSets', 'args': [{'name': 'runSets', 'value': '${runSets}'}], 'fields': [{'name': 'id', 'fields': []}, {'name': 'name', 'fields': []}, {'name': '_defaultColorIndex', 'fields': []}, {'name': 'summaryTable', 'args': [{'name': 'tableKey', 'value': 'test/roc_curve_class_0_table'}], 'fields': []}]}]}}} None
+2026-05-24 20:11:51,729 INFO    MainThread:21067 [wandb_run.py:_config_callback():1332] config_cb ('_wandb', 'visualize', 'test/roc_curve_class_1') {'panel_type': 'Vega2', 'panel_config': {'panelDefId': 'wandb/line/v0', 'fieldSettings': {'x': 'FPR', 'y': 'TPR', 'stroke': None}, 'stringSettings': {'title': 'ROC Curve — Class 1 (AUC=0.532)'}, 'transform': {'name': 'tableWithLeafColNames'}, 'userQuery': {'queryFields': [{'name': 'runSets', 'args': [{'name': 'runSets', 'value': '${runSets}'}], 'fields': [{'name': 'id', 'fields': []}, {'name': 'name', 'fields': []}, {'name': '_defaultColorIndex', 'fields': []}, {'name': 'summaryTable', 'args': [{'name': 'tableKey', 'value': 'test/roc_curve_class_1_table'}], 'fields': []}]}]}}} None
+2026-05-24 20:11:51,843 INFO    MainThread:21067 [wandb_run.py:_finish():2271] finishing run smahalanobis-uc-davis/uveitis-per-zone/nfa6pssf
+2026-05-24 20:11:51,844 INFO    MainThread:21067 [wandb_run.py:_atexit_cleanup():2476] got exitcode: 0
+2026-05-24 20:11:51,844 INFO    MainThread:21067 [wandb_run.py:_restore():2458] restore
+2026-05-24 20:11:51,844 INFO    MainThread:21067 [wandb_run.py:_restore():2464] restore done
+2026-05-24 20:11:53,639 INFO    MainThread:21067 [wandb_run.py:_footer_sync_info():3877] logging synced files

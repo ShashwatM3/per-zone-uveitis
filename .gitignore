@@ -9,12 +9,16 @@ venv/
 # Large array bundles (regenerate locally)
 *.npz
 *.npy
+*.zip
 
 # Local scratch and smoke-test outputs
 temp/
 
 # Local dataset path (symlink; machine-specific)
 /data
+data/
+prev_data/
+Sample 2.5.2026/
 
 processed_image_arrays/
 runs/

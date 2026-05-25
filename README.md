@@ -83,10 +83,12 @@ python train_convnext.py \
   --data-root processed_image_arrays \
   --loss focal \
   --epochs 50 \
-  --output-dir runs/convnext_focal \
+  --output-dir runs/convnext_focal_v2 \
   --wandb-project uveitis-per-zone \
-  --wandb-run-name convnext-focal
+  --wandb-run-name convnext-focal-v2
 ```
+
+Pick a fresh `--output-dir` for each run so previous `best.pt` checkpoints aren't overwritten before you've confirmed the new run is healthy. Defaults assume an A6000-class GPU: `--batch-size 32`, `--num-workers 8`, cosine LR with backbone at `lr * 0.1`, and early stopping with patience 8.
 
 To compare with standard Weighted CrossEntropy:
 

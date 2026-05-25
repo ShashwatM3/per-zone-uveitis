@@ -1,0 +1,128 @@
+_wandb:
+    value:
+        cli_version: 0.27.0
+        e:
+            9dc4l8e5zdsf6gz9wk69r8inzmqiyggj:
+                args:
+                    - --csv
+                    - processed_image_arrays/zone_training_table.csv
+                    - --data-root
+                    - processed_image_arrays
+                    - --loss
+                    - focal
+                    - --epochs
+                    - "50"
+                    - --output-dir
+                    - runs/convnext_focal
+                    - --wandb-project
+                    - uveitis-per-zone
+                    - --wandb-run-name
+                    - convnext-focal
+                codePath: train_convnext.py
+                codePathLocal: train_convnext.py
+                cpu_count: 32
+                cpu_count_logical: 64
+                cudaVersion: "12.2"
+                disk:
+                    /:
+                        total: "1967317549056"
+                        used: "1713247055872"
+                email: smahalanobis@ucdavis.edu
+                executable: /home/shashwat/per-zone-uveitis/.venv/bin/python
+                git:
+                    commit: 1971da58611a362b957109bdd8d2dc1f5defe624
+                    remote: git@github.com:ShashwatM3/per-zone-uveitis.git
+                gpu: NVIDIA RTX A6000
+                gpu_count: 4
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 10752
+                      memoryTotal: "51527024640"
+                      name: NVIDIA RTX A6000
+                      uuid: GPU-55027106-acc5-6086-f8b1-a72d84114dcc
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-38449083-9098-a1f2-0255-b3557b9de81c
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-93fb7751-a4f3-0d8b-a900-bd27eb9db487
+                    - architecture: Ampere
+                      cudaCores: 10752
+                      memoryTotal: "51527024640"
+                      name: NVIDIA RTX A6000
+                      uuid: GPU-33a26cec-2094-b972-4131-54236b5bfb6c
+                host: LARA156
+                memory:
+                    total: "270043099136"
+                os: Linux-6.8.0-111-generic-x86_64-with-glibc2.35
+                program: /home/shashwat/per-zone-uveitis/train_convnext.py
+                python: CPython 3.13.11
+                root: /home/shashwat/per-zone-uveitis
+                startedAt: "2026-05-24T02:44:22.546218Z"
+                writerId: 9dc4l8e5zdsf6gz9wk69r8inzmqiyggj
+        m: []
+        python_version: 3.13.11
+        t:
+            "1":
+                - 1
+                - 5
+                - 41
+                - 53
+            "2":
+                - 1
+                - 5
+                - 41
+                - 53
+            "3":
+                - 13
+                - 16
+            "4": 3.13.11
+            "5": 0.27.0
+            "12": 0.27.0
+            "13": linux-x86_64
+batch_size:
+    value: 16
+class_weighting:
+    value: inverse
+csv:
+    value: processed_image_arrays/zone_training_table.csv
+data_root:
+    value: processed_image_arrays
+epochs:
+    value: 50
+focal_gamma:
+    value: 2
+freeze_backbone_epochs:
+    value: 3
+image_size:
+    value: 224
+loss:
+    value: focal
+lr:
+    value: 0.0003
+no_pretrained:
+    value: false
+no_wandb:
+    value: false
+num_classes:
+    value: 2
+num_workers:
+    value: 2
+output_dir:
+    value: runs/convnext_focal
+seed:
+    value: 13
+split_attempts:
+    value: 10000
+split_json:
+    value: null
+wandb_project:
+    value: uveitis-per-zone
+wandb_run_name:
+    value: convnext-focal
+weight_decay:
+    value: 0.0001

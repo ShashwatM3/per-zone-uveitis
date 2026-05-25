@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable, Iterable
 
+import numpy as np
 from PIL import Image
 from torch.utils.data import Dataset
 
@@ -31,28 +32,103 @@ class ZoneRecord:
     image_path: Path
     zone_number: int
     label: int
+    # Populated only for the new on-the-fly schema (Cleaned_Image column).
+    # When ``cx`` is None the record is "legacy": ``image_path`` already points
+    # at a pre-cropped zone PNG and is loaded directly by ``ZoneImageDataset``.
+    cx: int | None = None
+    cy: int | None = None
+    angle_deg: float | None = None
+
+
+def _read_zone_meta(json_path: Path) -> tuple[int, int, float]:
+    with json_path.open(encoding="utf-8") as f:
+        meta = json.load(f)
+    return int(meta["cx"]), int(meta["cy"]), float(meta["angle_deg"])
 
 
 def load_zone_records(csv_path: Path, data_root: Path) -> list[ZoneRecord]:
+    """Load zone records from either the new (Cleaned_Image) or legacy (Zone_Image) CSV.
+
+    New schema columns: ``Patient_ID, Cleaned_Image, Zone_Number, Zone_Label``
+    Legacy columns:     ``Patient_ID, Zone_Image,    Zone_Number, Zone_Label``
+
+    For the new schema each row's ``Cleaned_Image`` points at a ``.npy`` cached
+    by ``pre_processing.py``; the matching ``.json`` sidecar stores the geometry
+    (``cx``, ``cy``, ``angle_deg``) used to mask + crop the requested zone at
+    ``__getitem__`` time.
+    """
     records: list[ZoneRecord] = []
+    meta_cache: dict[Path, tuple[int, int, float]] = {}
+    missing_meta: list[Path] = []
+
     with csv_path.open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        required = {"Patient_ID", "Zone_Image", "Zone_Number", "Zone_Label"}
-        missing = required - set(reader.fieldnames or [])
+        fieldnames = set(reader.fieldnames or [])
+        if "Cleaned_Image" in fieldnames:
+            image_col = "Cleaned_Image"
+            schema = "cleaned"
+        elif "Zone_Image" in fieldnames:
+            image_col = "Zone_Image"
+            schema = "legacy"
+        else:
+            raise ValueError(
+                f"{csv_path} must contain either Cleaned_Image or Zone_Image column "
+                f"(got {sorted(fieldnames)})"
+            )
+        required = {"Patient_ID", image_col, "Zone_Number", "Zone_Label"}
+        missing = required - fieldnames
         if missing:
             raise ValueError(f"{csv_path} missing columns: {sorted(missing)}")
 
         for row in reader:
-            image_rel = Path(str(row["Zone_Image"]).replace("\\", "/"))
+            image_rel = Path(str(row[image_col]).replace("\\", "/"))
+            abs_path = data_root / image_rel
             raw_label = int(float(row["Zone_Label"]))
+            patient_id = int(float(row["Patient_ID"]))
+            zone_number = int(float(row["Zone_Number"]))
+            label = zone_label_to_binary(raw_label)
+
+            if schema == "legacy":
+                records.append(
+                    ZoneRecord(
+                        patient_id=patient_id,
+                        image_path=abs_path,
+                        zone_number=zone_number,
+                        label=label,
+                    )
+                )
+                continue
+
+            meta_path = abs_path.with_suffix(".json")
+            if meta_path in meta_cache:
+                cx, cy, angle = meta_cache[meta_path]
+            else:
+                try:
+                    cx, cy, angle = _read_zone_meta(meta_path)
+                except FileNotFoundError:
+                    missing_meta.append(meta_path)
+                    continue
+                meta_cache[meta_path] = (cx, cy, angle)
+
             records.append(
                 ZoneRecord(
-                    patient_id=int(float(row["Patient_ID"])),
-                    image_path=data_root / image_rel,
-                    zone_number=int(float(row["Zone_Number"])),
-                    label=zone_label_to_binary(raw_label),
+                    patient_id=patient_id,
+                    image_path=abs_path,
+                    zone_number=zone_number,
+                    label=label,
+                    cx=cx,
+                    cy=cy,
+                    angle_deg=angle,
                 )
             )
+
+    if missing_meta:
+        sample = ", ".join(str(p) for p in missing_meta[:5])
+        raise FileNotFoundError(
+            f"{len(missing_meta)} sidecar .json files were missing under {data_root}. "
+            f"First few: {sample}. Re-run pre_processing.py to (re)build the cache."
+        )
+
     return records
 
 
@@ -169,6 +245,44 @@ def load_or_create_split(
     return split
 
 
+def _load_zone_image(record: ZoneRecord) -> Image.Image:
+    """Load the requested zone as an RGB PIL Image.
+
+    Two code paths:
+      * legacy (``record.cx is None``) -- the path already points at a pre-cropped
+        zone PNG; just open + convert.
+      * new   (``record.cx`` populated) -- the path points at a cleaned RGBA
+        ``.npy`` for the full FP image; compute the one zone mask we need,
+        zero alpha outside it, crop to content, then return RGB.
+    """
+    if record.cx is None:
+        return Image.open(record.image_path).convert("RGB")
+
+    # Lazy import so non-training code paths (e.g. label inspection) don't pay
+    # the cv2 import cost.
+    from extract_zones import apply_zone_and_crop, make_zone_mask
+
+    # mmap so we only page in the (typically small) zone bbox region, not the
+    # full 60+ MB FP array. ``apply_zone_and_crop`` does a ``.copy()`` of the
+    # sub-slice, materialising it in RAM as needed.
+    cleaned = np.load(record.image_path, mmap_mode="r")
+    if cleaned.ndim != 3 or cleaned.shape[2] != 4:
+        raise ValueError(
+            f"Expected HxWx4 RGBA array at {record.image_path}, got {cleaned.shape}"
+        )
+    h, w = cleaned.shape[:2]
+    mask = make_zone_mask(
+        width=w,
+        height=h,
+        cx=record.cx,
+        cy=record.cy,
+        zone_number=record.zone_number,
+        angle_deg=record.angle_deg or 0.0,
+    )
+    zone_rgba = apply_zone_and_crop(cleaned, mask)
+    return Image.fromarray(zone_rgba, mode="RGBA").convert("RGB")
+
+
 class ZoneImageDataset(Dataset):
     def __init__(
         self,
@@ -183,7 +297,7 @@ class ZoneImageDataset(Dataset):
 
     def __getitem__(self, index: int):
         record = self.records[index]
-        image = Image.open(record.image_path).convert("RGB")
+        image = _load_zone_image(record)
         if self.transform is not None:
             image = self.transform(image)
         return {

@@ -15,7 +15,7 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
-from losses import build_loss
+from losses import FocalLoss, build_loss
 from zone_dataset import (
     ZoneImageDataset,
     labels_for,
@@ -150,7 +150,7 @@ def build_train_transform(image_size: int) -> transforms.Compose:
         transforms.RandomHorizontalFlip(),
         transforms.RandomVerticalFlip(),
         transforms.RandomRotation(30),
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.05),
+        transforms.ColorJitter(brightness=0.15, contrast=0.15, saturation=0.05, hue=0.02),
         transforms.ToTensor(),
         transforms.Normalize(CLIP_MEAN, CLIP_STD),
         transforms.RandomErasing(p=0.2),
@@ -185,10 +185,10 @@ class ClipConvNeXtClassifier(nn.Module):
         if head_hidden > 0:
             self.classifier = nn.Sequential(
                 nn.LayerNorm(head_in),
-                nn.Dropout(p=0.3),
+                nn.Dropout(p=0.4),
                 nn.Linear(head_in, head_hidden),
                 nn.GELU(),
-                nn.Dropout(p=0.2),
+                nn.Dropout(p=0.3),
                 nn.Linear(head_hidden, num_classes),
             )
         else:
@@ -454,14 +454,18 @@ def main() -> int:
         pin_memory=device.type == "cuda",
     )
 
-    criterion = build_loss(
-        args.loss,
-        labels_for(train_records),
-        args.num_classes,
-        device,
-        class_weighting=args.class_weighting,
-        focal_gamma=args.focal_gamma,
-    )
+    if args.loss == "focal":
+        alpha = torch.tensor([1.0, 2.0], device=device)
+        criterion = FocalLoss(gamma=args.focal_gamma, alpha=alpha)
+    else:
+        criterion = build_loss(
+            args.loss,
+            labels_for(train_records),
+            args.num_classes,
+            device,
+            class_weighting=args.class_weighting,
+            focal_gamma=args.focal_gamma,
+        )
     optimizer = torch.optim.AdamW(
         [
             {"params": model.visual.parameters(), "lr": args.lr * 0.05, "name": "backbone"},

@@ -93,10 +93,22 @@ def _zone_label_to_binary(raw_label: int) -> int:
     return 0 if raw_label == 0 else 1
 
 
+VISIT_DATE_FROM_PATH_RE = re.compile(r"(\d{8})")
+
+
 def build_annotation_index(
     xlsx_path: Path,
 ) -> Dict[Tuple[int, str, str, str], Tuple[int, ...]]:
-    """Map ``(patient_id, visit_yyyymmdd, eye, fp_stem_lower) -> 10 zone labels``."""
+    """Map ``(patient_id, visit_yyyymmdd, eye, fp_stem_lower) -> 10 zone labels``.
+
+    The Excel ``Visit_Date`` cell can be missing, malformed, or stored as a
+    string that ``visit_key_from_cell`` cannot collapse to an 8-digit token.
+    To recover those rows we additionally try to extract a ``YYYYMMDD`` token
+    directly from the ``UWFFP`` path (the file names are reliably stamped as
+    ``PatientXXX_YYYYMMDD_<eye>_FP_NNNN.png``). When the two sources differ
+    we register the row under BOTH visit keys so the on-disk visit token has
+    a chance of matching whichever one the source-of-truth turns out to be.
+    """
     import openpyxl
 
     wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
@@ -124,19 +136,31 @@ def build_annotation_index(
         eye = col_val(row, "Eye")
         visit_date = col_val(row, "Visit_Date")
         uwffp = col_val(row, "UWFFP")
-        if pid is None or eye is None or visit_date is None or uwffp is None:
+        if pid is None or eye is None or uwffp is None:
             continue
         try:
             patient_id = int(pid)
         except (TypeError, ValueError):
             continue
-        visit_key = visit_key_from_cell(visit_date)
-        if len(visit_key) != 8:
-            continue
         eye_u = str(eye).strip().upper()
         if eye_u not in {"OD", "OS"}:
             continue
-        fp_stem = Path(str(uwffp).replace("\\", "/")).stem.lower()
+
+        uwffp_norm = str(uwffp).replace("\\", "/")
+        fp_stem = Path(uwffp_norm).stem.lower()
+
+        primary_visit = visit_key_from_cell(visit_date)
+        path_match = VISIT_DATE_FROM_PATH_RE.search(uwffp_norm)
+        path_visit = path_match.group(1) if path_match else ""
+
+        visit_keys: List[str] = []
+        if len(primary_visit) == 8:
+            visit_keys.append(primary_visit)
+        if len(path_visit) == 8 and path_visit not in visit_keys:
+            visit_keys.append(path_visit)
+        if not visit_keys:
+            continue
+
         labels: List[int] = []
         ok = True
         for zi in range(1, 11):
@@ -152,8 +176,11 @@ def build_annotation_index(
                 break
         if not ok or len(labels) != 10:
             continue
-        k = (patient_id, visit_key, eye_u, fp_stem)
-        index[k] = tuple(labels)
+
+        labels_t = tuple(labels)
+        for vk in visit_keys:
+            k = (patient_id, vk, eye_u, fp_stem)
+            index.setdefault(k, labels_t)
 
     return index
 
@@ -241,9 +268,19 @@ def _process_fp(task: FpTask) -> dict:
             arr = np.ascontiguousarray(np.flip(arr, axis=1))
             flipped = True
 
-        cx, cy, angle_deg, yellow_count = detect_crosshair_from_yellow(
-            arr, output_dir=None, save_debug=False
-        )
+        fovea_fallback = False
+        try:
+            cx, cy, angle_deg, yellow_count = detect_crosshair_from_yellow(
+                arr, output_dir=None, save_debug=False
+            )
+        except ValueError:
+            # Faint / clipped / ambiguous crosshair. Fall back to image-center
+            # geometry (cx, cy at the middle of the frame, no rotation) so the
+            # FP is retained for training; downstream zone masks will be
+            # geometrically off but the image isn't lost. Flagged in metadata.
+            h, w = arr.shape[:2]
+            cx, cy, angle_deg, yellow_count = w // 2, h // 2, 0.0, 0
+            fovea_fallback = True
         cleaned = remove_yellow_overlay(arr, inpaint_radius=3, dilate_iterations=1)
 
         cleaned_dir.mkdir(parents=True, exist_ok=True)
@@ -265,6 +302,7 @@ def _process_fp(task: FpTask) -> dict:
             "cy": int(cy),
             "angle_deg": float(angle_deg),
             "yellow_pixels": int(yellow_count),
+            "fovea_fallback": bool(fovea_fallback),
             "shape": [int(x) for x in cleaned.shape],
             "dtype": str(cleaned.dtype),
         }
@@ -294,11 +332,21 @@ def _enumerate_fp_tasks(
 ) -> Tuple[List[FpTask], int, int]:
     """Walk ``data_dir`` and build the list of per-FP work items.
 
+    Matching strategy per FP:
+      1. Primary 4-tuple ``(pid, visit, eye, stem_lower)`` -- exact hit.
+      2. Fallback 3-tuple ``(pid, visit, eye)`` -- recovers FPs whose Excel
+         ``UWFFP`` cell points at a filename that doesn't match the on-disk
+         stem (different ``_NNNN`` suffix, missing patient prefix, etc.).
+    A diagnostic ``unmatched_fps.txt`` is written into ``output_dir`` listing
+    every FP that still failed to match after both passes, with the primary
+    key that was tried.
+
     Returns ``(tasks, fp_unmatched_count, fp_total_count)``.
     """
     tasks: List[FpTask] = []
     fp_total = 0
     fp_unmatched = 0
+    unmatched_log: List[Tuple[str, Tuple[object, ...]]] = []
 
     patient_dirs = sorted(
         p for p in data_dir.iterdir() if p.is_dir() and p.name.startswith("Patient")
@@ -316,11 +364,26 @@ def _enumerate_fp_tasks(
                 fp_total += 1
                 if eye not in {"OD", "OS"}:
                     fp_unmatched += 1
+                    unmatched_log.append(
+                        (str(image_path), (pid, visit_dir.name, eye, image_path.stem.lower()))
+                    )
                     continue
                 key = (pid, visit_dir.name, eye, image_path.stem.lower())
                 labels = label_index.get(key)
                 if labels is None:
+                    fallback_key = next(
+                        (
+                            k
+                            for k in label_index
+                            if k[0] == pid and k[1] == visit_dir.name and k[2] == eye
+                        ),
+                        None,
+                    )
+                    if fallback_key is not None:
+                        labels = label_index[fallback_key]
+                if labels is None:
                     fp_unmatched += 1
+                    unmatched_log.append((str(image_path), key))
                     continue
                 tasks.append(
                     FpTask(
@@ -335,6 +398,20 @@ def _enumerate_fp_tasks(
                         force=force,
                     )
                 )
+
+    unmatched_path = output_dir / "unmatched_fps.txt"
+    if unmatched_log:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        with unmatched_path.open("w", encoding="utf-8") as f:
+            for fp_path_str, tried_key in unmatched_log:
+                f.write(f"UNMATCHED: {fp_path_str}  tried_key={tried_key}\n")
+    elif unmatched_path.exists():
+        # Stale file from a prior run -- a clean run should leave no leftovers.
+        try:
+            unmatched_path.unlink()
+        except OSError:
+            pass
+
     return tasks, fp_unmatched, fp_total
 
 

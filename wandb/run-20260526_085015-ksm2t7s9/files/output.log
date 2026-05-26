@@ -1,0 +1,35 @@
+Device: cuda
+Loss: ce class_weighting=inverse
+Backbone: convnext_large_d_320 | pretrained=laion2b_s29b_b131k_ft_soup | output_dim=768 | trainable_params=216,130 | frozen_params=199,770,816
+Scheduler: cosine | Head LR: 0.0002 | Backbone LR: 1e-05 | grad_clip_norm: 1.0 | amp: True
+Split: {"train": [11, 13, 14, 16, 17, 18, 19, 21, 22, 23, 24, 25, 27, 28, 29, 30, 31, 32, 33, 35, 36, 37, 38, 39, 40, 42, 43, 44, 45, 47, 49, 50, 51, 55, 57, 59, 60, 61, 62, 64, 65, 68, 69, 70, 71, 72, 73, 74, 77, 79, 81, 83, 84, 85, 86, 87, 89, 90, 91, 92, 93, 95, 96, 97, 98, 99, 300, 302, 303, 305, 306, 307, 308, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319, 320, 322, 323, 324, 326, 329, 333, 335, 336, 337, 339, 340, 341, 343, 344, 345, 347, 349, 350, 352, 353, 354, 357, 358, 359, 363, 365], "val": [26, 34, 52, 53, 54, 56, 67, 75, 78, 82, 88, 304, 309, 325, 328, 331, 332, 334, 355, 356, 360, 361, 362], "test": [10, 12, 15, 20, 41, 46, 48, 58, 63, 66, 76, 80, 94, 301, 321, 327, 330, 338, 342, 346, 348, 351, 364]}
+epoch=001 train_loss=0.7050 val_loss=0.6982 val_macro_f1=0.4895 val_bal_acc=0.5009 lr_backbone=1.00e-05 lr_classifier=2.00e-04
+epoch=001 val/per_class={'0': {'precision': 0.6133786848072562, 'recall': 0.7545327754532776, 'f1': 0.6766729205753597, 'specificity': 0.24724061810154527}, '1': {'precision': 0.3888888888888889, 'recall': 0.24724061810154527, 'f1': 0.30229419703103916, 'specificity': 0.7545327754532776}}
+epoch=002 train_loss=0.6913 val_loss=0.7031 val_macro_f1=0.4826 val_bal_acc=0.4908 lr_backbone=9.98e-06 lr_classifier=2.00e-04
+epoch=002 val/per_class={'0': {'precision': 0.6068075117370892, 'recall': 0.7210599721059973, 'f1': 0.6590184831102615, 'specificity': 0.26048565121412803}, '1': {'precision': 0.3710691823899371, 'recall': 0.26048565121412803, 'f1': 0.30609597924773024, 'specificity': 0.7210599721059973}}
+epoch=003 train_loss=0.6914 val_loss=0.6975 val_macro_f1=0.5018 val_bal_acc=0.5035 lr_backbone=9.94e-06 lr_classifier=1.99e-04
+epoch=003 val/per_class={'0': {'precision': 0.6152866242038216, 'recall': 0.6736401673640168, 'f1': 0.6431424766977363, 'specificity': 0.3333333333333333}, '1': {'precision': 0.3922077922077922, 'recall': 0.3333333333333333, 'f1': 0.36038186157517904, 'specificity': 0.6736401673640168}}
+epoch=004 train_loss=0.6871 val_loss=0.7060 val_macro_f1=0.4769 val_bal_acc=0.4788 lr_backbone=9.86e-06 lr_classifier=1.97e-04
+epoch=004 val/per_class={'0': {'precision': 0.5943396226415094, 'recall': 0.5271966527196653, 'f1': 0.5587583148558759, 'specificity': 0.4304635761589404}, '1': {'precision': 0.3651685393258427, 'recall': 0.4304635761589404, 'f1': 0.39513677811550146, 'specificity': 0.5271966527196653}}
+epoch=005 train_loss=0.6868 val_loss=0.7003 val_macro_f1=0.4887 val_bal_acc=0.4887 lr_backbone=9.76e-06 lr_classifier=1.95e-04
+epoch=005 val/per_class={'0': {'precision': 0.6039603960396039, 'recall': 0.595536959553696, 'f1': 0.5997191011235955, 'specificity': 0.3818984547461369}, '1': {'precision': 0.37365010799136067, 'recall': 0.3818984547461369, 'f1': 0.37772925764192133, 'specificity': 0.595536959553696}}
+epoch=006 train_loss=0.6809 val_loss=0.7016 val_macro_f1=0.5061 val_bal_acc=0.5065 lr_backbone=9.62e-06 lr_classifier=1.92e-04
+epoch=006 val/per_class={'0': {'precision': 0.6180758017492711, 'recall': 0.5913528591352859, 'f1': 0.6044191019244476, 'specificity': 0.4216335540838852}, '1': {'precision': 0.39462809917355374, 'recall': 0.4216335540838852, 'f1': 0.407684098185699, 'specificity': 0.5913528591352859}}
+epoch=007 train_loss=0.6834 val_loss=0.7033 val_macro_f1=0.4904 val_bal_acc=0.4904 lr_backbone=9.46e-06 lr_classifier=1.89e-04
+epoch=007 val/per_class={'0': {'precision': 0.6053370786516854, 'recall': 0.601115760111576, 'f1': 0.6032190342897131, 'specificity': 0.37969094922737306}, '1': {'precision': 0.37554585152838427, 'recall': 0.37969094922737306, 'f1': 0.37760702524698136, 'specificity': 0.601115760111576}}
+epoch=008 train_loss=0.6808 val_loss=0.7016 val_macro_f1=0.4852 val_bal_acc=0.4868 lr_backbone=9.27e-06 lr_classifier=1.85e-04
+epoch=008 val/per_class={'0': {'precision': 0.603359173126615, 'recall': 0.6513249651324965, 'f1': 0.6264252179745138, 'specificity': 0.32229580573951433}, '1': {'precision': 0.3686868686868687, 'recall': 0.32229580573951433, 'f1': 0.34393404004711425, 'specificity': 0.6513249651324965}}
+epoch=009 train_loss=0.6817 val_loss=0.6980 val_macro_f1=0.5097 val_bal_acc=0.5186 lr_backbone=9.05e-06 lr_classifier=1.81e-04
+epoch=009 val/per_class={'0': {'precision': 0.6309314586994728, 'recall': 0.500697350069735, 'f1': 0.5583203732503889, 'specificity': 0.5364238410596026}, '1': {'precision': 0.4043261231281198, 'recall': 0.5364238410596026, 'f1': 0.461100569259962, 'specificity': 0.500697350069735}}
+epoch=010 train_loss=0.6781 val_loss=0.7028 val_macro_f1=0.4829 val_bal_acc=0.4830 lr_backbone=8.81e-06 lr_classifier=1.76e-04
+epoch=010 val/per_class={'0': {'precision': 0.5991316931982634, 'recall': 0.5774058577405857, 'f1': 0.5880681818181819, 'specificity': 0.38852097130242824}, '1': {'precision': 0.3674321503131524, 'recall': 0.38852097130242824, 'f1': 0.3776824034334764, 'specificity': 0.5774058577405857}}
+Backbone unfrozen at epoch 11
+epoch=011 train_loss=0.6920 val_loss=0.7052 val_macro_f1=0.4933 val_bal_acc=0.4959 lr_backbone=8.55e-06 lr_classifier=1.71e-04
+epoch=011 val/per_class={'0': {'precision': 0.6091772151898734, 'recall': 0.5369595536959554, 'f1': 0.5707931801334322, 'specificity': 0.45474613686534215}, '1': {'precision': 0.3828996282527881, 'recall': 0.45474613686534215, 'f1': 0.41574167507568116, 'specificity': 0.5369595536959554}}
+epoch=012 train_loss=0.6767 val_loss=0.7520 val_macro_f1=0.4523 val_bal_acc=0.4910 lr_backbone=8.26e-06 lr_classifier=1.65e-04
+epoch=012 val/per_class={'0': {'precision': 0.6, 'recall': 0.3263598326359833, 'f1': 0.42276422764227645, 'specificity': 0.6556291390728477}, '1': {'precision': 0.38076923076923075, 'recall': 0.6556291390728477, 'f1': 0.4817518248175182, 'specificity': 0.3263598326359833}}
+epoch=013 train_loss=0.6682 val_loss=0.7105 val_macro_f1=0.4923 val_bal_acc=0.4949 lr_backbone=7.96e-06 lr_classifier=1.59e-04
+epoch=013 val/per_class={'0': {'precision': 0.6092964824120602, 'recall': 0.6764295676429568, 'f1': 0.6411103767349636, 'specificity': 0.31346578366445915}, '1': {'precision': 0.37967914438502676, 'recall': 0.31346578366445915, 'f1': 0.343409915356711, 'specificity': 0.6764295676429568}}
+epoch=014 train_loss=0.6588 val_loss=0.7774 val_macro_f1=0.4664 val_bal_acc=0.4731 lr_backbone=7.64e-06 lr_classifier=1.52e-04
+epoch=014 val/per_class={'0': {'precision': 0.5866900175131349, 'recall': 0.46722454672245467, 'f1': 0.5201863354037267, 'specificity': 0.47902869757174393}, '1': {'precision': 0.3622704507512521, 'recall': 0.47902869757174393, 'f1': 0.4125475285171103, 'specificity': 0.46722454672245467}}
+epoch=015 train_loss=0.6446 val_loss=0.7490 val_macro_f1=0.4740 val_bal_acc=0.4868 lr_backbone=7.30e-06 lr_classifier=1.45e-04

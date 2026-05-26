@@ -65,7 +65,7 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional patient split JSON. Existing files are reused; missing files are created.",
     )
-    parser.add_argument("--loss", choices=("ce", "focal"), default="ce")
+    parser.add_argument("--loss", choices=("ce", "soft_ce", "focal"), default="ce")
     parser.add_argument(
         "--class-weighting",
         choices=("none", "inverse", "effective"),
@@ -85,7 +85,7 @@ def parse_args() -> argparse.Namespace:
         "--lr",
         type=float,
         default=1e-4,
-        help="Classifier-head learning rate. Backbone is trained at lr * 0.05.",
+        help="Classifier-head learning rate. Backbone uses layer-wise LRs after unfreeze.",
     )
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--num-workers", type=int, default=8)
@@ -97,6 +97,24 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=5,
         help="Freeze the visual tower for this many initial epochs.",
+    )
+    parser.add_argument(
+        "--backbone-lr-stages01",
+        type=float,
+        default=1e-7,
+        help="Backbone LR for stem + stages 0-1 after unfreeze.",
+    )
+    parser.add_argument(
+        "--backbone-lr-stages23",
+        type=float,
+        default=3e-6,
+        help="Backbone LR for stages 2-3 after unfreeze.",
+    )
+    parser.add_argument(
+        "--backbone-lr-head-norm",
+        type=float,
+        default=8e-6,
+        help="Backbone LR for trunk norm/head + visual projection head after unfreeze.",
     )
     parser.add_argument(
         "--grad-clip-norm",
@@ -132,6 +150,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--wandb-project", type=str, default="uveitis-per-zone")
     parser.add_argument("--wandb-run-name", type=str, default="clip-convnext-large-d-320")
     parser.add_argument("--no-wandb", action="store_true", help="Disable W&B logging.")
+    parser.add_argument(
+        "--soft-labels",
+        action="store_true",
+        help=(
+            "Use soft tier targets [1,0]/[0.5,0.5]/[0,1] for training only. "
+            "Requires the multiclass CSV with raw 0/1/2 Zone_Label values."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -249,6 +275,50 @@ def set_backbone_trainable(model: ClipConvNeXtClassifier, trainable: bool) -> No
         parameter.requires_grad = trainable
 
 
+def backbone_param_groups(
+    visual: nn.Module,
+    lr_stages01: float,
+    lr_stages23: float,
+    lr_head_norm: float,
+) -> list[dict[str, Any]]:
+    """Layer-wise AdamW groups for the OpenCLIP ConvNeXt visual tower."""
+    trunk = visual.trunk
+    stages01_params: list[nn.Parameter] = []
+    for module in (trunk.stem, trunk.stages[0], trunk.stages[1]):
+        stages01_params.extend(module.parameters())
+
+    stages23_params: list[nn.Parameter] = []
+    for module in (trunk.stages[2], trunk.stages[3]):
+        stages23_params.extend(module.parameters())
+
+    head_norm_params: list[nn.Parameter] = []
+    head_norm_params.extend(trunk.head.parameters())
+    if getattr(visual, "head", None) is not None:
+        head_norm_params.extend(visual.head.parameters())
+
+    return [
+        {"params": stages01_params, "lr": lr_stages01, "name": "backbone_stages_01"},
+        {"params": stages23_params, "lr": lr_stages23, "name": "backbone_stages_23"},
+        {"params": head_norm_params, "lr": lr_head_norm, "name": "backbone_head_norm"},
+    ]
+
+
+def build_optimizer(
+    model: ClipConvNeXtClassifier,
+    args: argparse.Namespace,
+) -> torch.optim.AdamW:
+    param_groups = backbone_param_groups(
+        model.visual,
+        lr_stages01=args.backbone_lr_stages01,
+        lr_stages23=args.backbone_lr_stages23,
+        lr_head_norm=args.backbone_lr_head_norm,
+    )
+    param_groups.append(
+        {"params": model.classifier.parameters(), "lr": args.lr, "name": "classifier"}
+    )
+    return torch.optim.AdamW(param_groups, weight_decay=args.weight_decay)
+
+
 def parameter_counts(model: nn.Module) -> tuple[int, int]:
     trainable = sum(parameter.numel() for parameter in model.parameters() if parameter.requires_grad)
     frozen = sum(parameter.numel() for parameter in model.parameters() if not parameter.requires_grad)
@@ -259,7 +329,9 @@ def batch_to_device(
     batch: dict[str, Any], device: torch.device
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     images = batch["image"].to(device)
-    labels = batch["label"].to(device, dtype=torch.long)
+    labels = batch["label"].to(device)
+    if labels.dtype != torch.float32:
+        labels = labels.long()
     zones = batch["zone_number"].to(device, dtype=torch.long)
     return images, labels, zones
 
@@ -346,6 +418,9 @@ def run_epoch(
                 logits = model(images, zones)
                 loss = criterion(logits, labels)
 
+            hard_preds = logits.argmax(dim=1)
+            hard_labels = labels.argmax(dim=1) if labels.dtype == torch.float32 else labels
+
             if is_train:
                 optimizer.zero_grad(set_to_none=True)
                 if scaler is not None and use_amp:
@@ -367,13 +442,13 @@ def run_epoch(
 
             if return_probs:
                 probs = torch.softmax(logits.float(), dim=1).cpu().tolist()
-                for true_label, prob_vec in zip(labels.cpu().tolist(), probs):
+                for true_label, prob_vec in zip(hard_labels.cpu().tolist(), probs):
                     collected_probs.append((true_label, prob_vec))
 
             batch_size = labels.size(0)
             total_loss += loss.item() * batch_size
             total_examples += batch_size
-            update_confusion(confusion, logits.argmax(dim=1).cpu(), labels.cpu())
+            update_confusion(confusion, hard_preds.cpu(), hard_labels.cpu())
 
     metrics = metrics_from_confusion(confusion)
     metrics["loss"] = total_loss / total_examples if total_examples else 0.0
@@ -433,7 +508,7 @@ def main() -> int:
     model = model.to(device)
 
     train_loader = DataLoader(
-        ZoneImageDataset(train_records, train_transform),
+        ZoneImageDataset(train_records, train_transform, soft_labels=args.soft_labels),
         batch_size=args.batch_size,
         shuffle=True,
         num_workers=args.num_workers,
@@ -466,13 +541,7 @@ def main() -> int:
             class_weighting=args.class_weighting,
             focal_gamma=args.focal_gamma,
         )
-    optimizer = torch.optim.AdamW(
-        [
-            {"params": model.visual.parameters(), "lr": args.lr * 0.05, "name": "backbone"},
-            {"params": model.classifier.parameters(), "lr": args.lr, "name": "classifier"},
-        ],
-        weight_decay=args.weight_decay,
-    )
+    optimizer = build_optimizer(model, args)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=args.epochs, eta_min=1e-7
     )
@@ -492,8 +561,10 @@ def main() -> int:
         f"frozen_params={frozen_params:,}"
     )
     print(
-        f"Scheduler: cosine | "
-        f"Head LR: {args.lr} | Backbone LR: {args.lr * 0.05} | "
+        f"Scheduler: cosine | Head LR: {args.lr} | "
+        f"Backbone LRs: stages01={args.backbone_lr_stages01:.1e} "
+        f"stages23={args.backbone_lr_stages23:.1e} "
+        f"head_norm={args.backbone_lr_head_norm:.1e} | "
         f"grad_clip_norm: {args.grad_clip_norm} | amp: {use_amp}"
     )
     print(f"Split: {json.dumps(split)}")

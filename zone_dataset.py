@@ -9,8 +9,15 @@ from pathlib import Path
 from typing import Callable, Iterable
 
 import numpy as np
+import torch
 from PIL import Image
 from torch.utils.data import Dataset
+
+SOFT_TARGETS = {
+    0: [1.0, 0.0],  # tier 0 → healthy
+    1: [0.5, 0.5],  # tier 1 → ambiguous
+    2: [0.0, 1.0],  # tier 2 → active disease
+}
 
 # Spreadsheet / legacy table uses three severity tiers {0, 1, 2}. Training collapses
 # the two non-zero tiers into a single positive class for binary classification.
@@ -32,6 +39,7 @@ class ZoneRecord:
     image_path: Path
     zone_number: int
     label: int
+    raw_label: int
     # Populated only for the new on-the-fly schema (Cleaned_Image column).
     # When ``cx`` is None the record is "legacy": ``image_path`` already points
     # at a pre-cropped zone PNG and is loaded directly by ``ZoneImageDataset``.
@@ -95,6 +103,7 @@ def load_zone_records(csv_path: Path, data_root: Path) -> list[ZoneRecord]:
                         image_path=abs_path,
                         zone_number=zone_number,
                         label=label,
+                        raw_label=raw_label,
                     )
                 )
                 continue
@@ -116,6 +125,7 @@ def load_zone_records(csv_path: Path, data_root: Path) -> list[ZoneRecord]:
                     image_path=abs_path,
                     zone_number=zone_number,
                     label=label,
+                    raw_label=raw_label,
                     cx=cx,
                     cy=cy,
                     angle_deg=angle,
@@ -288,9 +298,11 @@ class ZoneImageDataset(Dataset):
         self,
         records: list[ZoneRecord],
         transform: Callable | None = None,
+        soft_labels: bool = False,
     ) -> None:
         self.records = records
         self.transform = transform
+        self.soft_labels = soft_labels
 
     def __len__(self) -> int:
         return len(self.records)
@@ -300,9 +312,13 @@ class ZoneImageDataset(Dataset):
         image = _load_zone_image(record)
         if self.transform is not None:
             image = self.transform(image)
+        if self.soft_labels:
+            label = torch.tensor(SOFT_TARGETS[record.raw_label], dtype=torch.float32)
+        else:
+            label = record.label
         return {
             "image": image,
-            "label": record.label,
+            "label": label,
             "patient_id": record.patient_id,
             "zone_number": record.zone_number,
             "image_path": str(record.image_path),

@@ -1,0 +1,21 @@
+2026-05-26 11:57:44,777 INFO    MainThread:543629 [wandb_setup.py:_flush():81] Current SDK version is 0.26.1
+2026-05-26 11:57:44,777 INFO    MainThread:543629 [wandb_setup.py:_flush():81] Configure stats pid to 543629
+2026-05-26 11:57:44,777 INFO    MainThread:543629 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2026-05-26 11:57:44,778 INFO    MainThread:543629 [wandb_init.py:setup_run_log_directory():723] Logging user logs to /home/shashwat/per-zone-uveitis/wandb/run-20260526_115744-rzjzkxgf/logs/debug.log
+2026-05-26 11:57:44,778 INFO    MainThread:543629 [wandb_init.py:setup_run_log_directory():724] Logging internal logs to /home/shashwat/per-zone-uveitis/wandb/run-20260526_115744-rzjzkxgf/logs/debug-internal.log
+2026-05-26 11:57:44,778 INFO    MainThread:543629 [wandb_init.py:init():850] calling init triggers
+2026-05-26 11:57:44,778 INFO    MainThread:543629 [wandb_init.py:init():855] wandb.init called with sweep_config: {}
+config: {'csv': 'processed_image_arrays_multiclass/zone_training_table.csv', 'data_root': 'processed_image_arrays_multiclass', 'output_dir': 'runs/clip_convnext_softlabel_v5', 'split_json': None, 'loss': 'soft_ce', 'class_weighting': 'inverse', 'focal_gamma': 2.0, 'num_classes': 2, 'epochs': 40, 'batch_size': 32, 'lr': 0.0002, 'weight_decay': 0.0005, 'num_workers': 2, 'image_size': 320, 'seed': 13, 'split_attempts': 10000, 'freeze_backbone_epochs': 20, 'backbone_lr_stages01': 1e-07, 'backbone_lr_stages23': 3e-06, 'backbone_lr_head_norm': 8e-06, 'grad_clip_norm': 1.0, 'no_amp': False, 'zone_embed_dim': 64, 'head_hidden': 256, 'patience': 12, 'wandb_project': 'uveitis-per-zone', 'wandb_run_name': 'clip-convnext-softlabel-v5', 'no_wandb': False, 'soft_labels': True, '_wandb': {}}
+2026-05-26 11:57:44,778 INFO    MainThread:543629 [wandb_init.py:init():898] starting backend
+2026-05-26 11:57:44,992 INFO    MainThread:543629 [wandb_init.py:init():913] sending inform_init request
+2026-05-26 11:57:45,248 INFO    MainThread:543629 [wandb_init.py:init():918] backend started and connected
+2026-05-26 11:57:45,250 INFO    MainThread:543629 [wandb_init.py:init():988] updated telemetry
+2026-05-26 11:57:45,257 INFO    MainThread:543629 [wandb_init.py:init():1011] communicating run to backend with 90.0 second timeout
+2026-05-26 11:57:45,690 INFO    MainThread:543629 [wandb_init.py:init():1056] starting run threads in backend
+2026-05-26 11:57:45,754 INFO    MainThread:543629 [wandb_run.py:_console_start():2554] atexit reg
+2026-05-26 11:57:45,754 INFO    MainThread:543629 [wandb_run.py:_redirect():2403] redirect: wrap_raw
+2026-05-26 11:57:45,754 INFO    MainThread:543629 [wandb_run.py:_redirect():2472] Wrapping output streams.
+2026-05-26 11:57:45,754 INFO    MainThread:543629 [wandb_run.py:_redirect():2495] Redirects installed.
+2026-05-26 11:57:45,756 INFO    MainThread:543629 [wandb_init.py:init():1094] run started, returning control to user process
+2026-05-26 12:32:07,814 INFO    wandb-AsyncioManager-main:543629 [service_client.py:_forward_responses():134] Reached EOF.
+2026-05-26 12:32:07,814 INFO    wandb-AsyncioManager-main:543629 [mailbox.py:close():155] Closing mailbox, abandoning 1 handles.

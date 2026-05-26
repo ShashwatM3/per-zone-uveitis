@@ -42,22 +42,51 @@ This stage uses the generated zone crops and labels to train a classifier.
 ├── pre_processing.py       # Data standardization and table building
 ├── zone_dataset.py         # PyTorch dataset and patient splitting
 ├── losses.py               # Loss functions (CE, Focal Loss)
-├── train_convnext.py       # Model training script
-├── requirements.txt        # Python dependencies
+├── train_convnext.py       # ConvNeXt-Tiny training script
+├── train_clip_convnext.py  # OpenCLIP ConvNeXt-Large training script
+├── requirements.txt        # Python dependencies (install inside conda env)
 └── processed_image_arrays/ # Output of preprocessing (NPZs, crops, table)
 ```
 
 ## Getting Started
 
-### 1. Install Dependencies
+### 1. Environment (conda)
+
+Use the conda env named `venv` — **not** the project-local `.venv`. On the LARA GPU cluster the
+`.venv` PyTorch build does not match the cluster CUDA driver and will fall back to CPU.
+
 ```bash
+conda create -n venv python=3.14 pip -y   # skip if the env already exists
+conda activate venv
 pip install -r requirements.txt
 ```
+
+Verify GPU access before training (should print `True` and your GPU name):
+
+```bash
+python -c "import torch; print(torch.cuda.is_available(), torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'n/a')"
+```
+
+On a shared multi-GPU node, pin a free device and run inside `tmux`/`screen` so jobs survive disconnects:
+
+```bash
+nvidia-smi                                    # pick a free GPU index
+CUDA_VISIBLE_DEVICES=3 conda activate venv    # example: use GPU 3
+```
+
+All commands below assume `conda activate venv` is active.
 
 ### 2. Run Preprocessing
 Standardize the raw data and generate the training table:
 ```bash
+conda activate venv
 python pre_processing.py --data-dir ./data --output-dir ./processed_image_arrays
+```
+
+For soft-label training, regenerate the multiclass table (raw 0/1/2 labels):
+
+```bash
+python pre_processing.py --multiclass-zone-labels --output-dir processed_image_arrays_multiclass
 ```
 
 ### 3. Train the Model
@@ -67,6 +96,7 @@ Authenticate with W&B once (if you use cloud logging): `wandb login`.
 Quick smoke test with experiment tracking:
 
 ```bash
+conda activate venv
 python train_convnext.py \
   --csv processed_image_arrays/zone_training_table.csv \
   --data-root processed_image_arrays \
@@ -78,6 +108,7 @@ python train_convnext.py \
 Train a ConvNeXt classifier using Focal Loss:
 
 ```bash
+conda activate venv
 python train_convnext.py \
   --csv processed_image_arrays/zone_training_table.csv \
   --data-root processed_image_arrays \
@@ -88,11 +119,12 @@ python train_convnext.py \
   --wandb-run-name convnext-focal-v2
 ```
 
-Pick a fresh `--output-dir` for each run so previous `best.pt` checkpoints aren't overwritten before you've confirmed the new run is healthy. Defaults assume an A6000-class GPU: `--batch-size 32`, `--num-workers 8`, cosine LR with backbone at `lr * 0.1`, and early stopping with patience 8.
+Pick a fresh `--output-dir` for each run so previous `best.pt` checkpoints aren't overwritten before you've confirmed the new run is healthy. Defaults assume an A6000-class GPU: `--batch-size 32`, `--num-workers 8`, cosine LR with backbone at `lr * 0.1`, and early stopping with patience 8. If DataLoader workers crash (`double free or corruption`), use `--num-workers 0`.
 
 To compare with standard Weighted CrossEntropy:
 
 ```bash
+conda activate venv
 python train_convnext.py \
   --csv processed_image_arrays/zone_training_table.csv \
   --data-root processed_image_arrays \
@@ -101,6 +133,22 @@ python train_convnext.py \
   --output-dir runs/convnext_ce \
   --wandb-project uveitis-per-zone \
   --wandb-run-name convnext-ce
+```
+
+OpenCLIP ConvNeXt-Large with soft tier-1 labels (`train_clip_convnext.py`):
+
+```bash
+conda activate venv
+CUDA_VISIBLE_DEVICES=3 python train_clip_convnext.py \
+  --csv processed_image_arrays_multiclass/zone_training_table.csv \
+  --data-root processed_image_arrays_multiclass \
+  --loss soft_ce \
+  --soft-labels \
+  --class-weighting inverse \
+  --zone-embed-dim 64 \
+  --num-workers 0 \
+  --output-dir runs/clip_convnext_softlabel_v5 \
+  --wandb-run-name clip-convnext-softlabel-v5
 ```
 
 Disable W&B entirely (no `wandb` calls):

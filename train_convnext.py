@@ -61,7 +61,7 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional patient split JSON. Existing files are reused; missing files are created.",
     )
-    parser.add_argument("--loss", choices=("ce", "focal"), default="ce")
+    parser.add_argument("--loss", choices=("ce", "soft_ce", "focal"), default="ce")
     parser.add_argument(
         "--class-weighting",
         choices=("none", "inverse", "effective"),
@@ -128,6 +128,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--wandb-project", type=str, default="uveitis-per-zone")
     parser.add_argument("--wandb-run-name", type=str, default=None)
     parser.add_argument("--no-wandb", action="store_true", help="Disable W&B logging.")
+    parser.add_argument(
+        "--soft-labels",
+        action="store_true",
+        help=(
+            "Use soft tier targets [1,0]/[0.5,0.5]/[0,1] for training only. "
+            "Requires the multiclass CSV with raw 0/1/2 Zone_Label values."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -247,7 +255,9 @@ def batch_to_device(
     batch: dict[str, Any], device: torch.device
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     images = batch["image"].to(device)
-    labels = batch["label"].to(device, dtype=torch.long)
+    labels = batch["label"].to(device)
+    if labels.dtype != torch.float32:
+        labels = labels.long()
     zones = batch["zone_number"].to(device, dtype=torch.long)
     return images, labels, zones
 
@@ -334,6 +344,9 @@ def run_epoch(
                 logits = model(images, zones)
                 loss = criterion(logits, labels)
 
+            hard_preds = logits.argmax(dim=1)
+            hard_labels = labels.argmax(dim=1) if labels.dtype == torch.float32 else labels
+
             if is_train:
                 optimizer.zero_grad(set_to_none=True)
                 if scaler is not None and use_amp:
@@ -355,13 +368,13 @@ def run_epoch(
 
             if return_probs:
                 probs = torch.softmax(logits.float(), dim=1).cpu().tolist()
-                for true_label, prob_vec in zip(labels.cpu().tolist(), probs):
+                for true_label, prob_vec in zip(hard_labels.cpu().tolist(), probs):
                     collected_probs.append((true_label, prob_vec))
 
             batch_size = labels.size(0)
             total_loss += loss.item() * batch_size
             total_examples += batch_size
-            update_confusion(confusion, logits.argmax(dim=1).cpu(), labels.cpu())
+            update_confusion(confusion, hard_preds.cpu(), hard_labels.cpu())
 
     metrics = metrics_from_confusion(confusion)
     metrics["loss"] = total_loss / total_examples if total_examples else 0.0
@@ -413,7 +426,7 @@ def main() -> int:
 
     train_transform, eval_transform = build_transforms(args.image_size)
     train_loader = DataLoader(
-        ZoneImageDataset(train_records, train_transform),
+        ZoneImageDataset(train_records, train_transform, soft_labels=args.soft_labels),
         batch_size=args.batch_size,
         shuffle=True,
         num_workers=args.num_workers,

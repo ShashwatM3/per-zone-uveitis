@@ -7,6 +7,26 @@ from torch import nn
 from torch.nn import functional as F
 
 
+class SoftCrossEntropyLoss(nn.Module):
+    """Cross-entropy loss that accepts soft float target distributions."""
+
+    def __init__(self, weight: torch.Tensor | None = None):
+        super().__init__()
+        if weight is not None:
+            self.register_buffer("weight", weight.float())
+        else:
+            self.weight = None
+
+    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        if targets.dtype in (torch.long, torch.int64):
+            targets = F.one_hot(targets, num_classes=logits.shape[1]).float()
+        log_probs = F.log_softmax(logits, dim=1)
+        if self.weight is not None:
+            log_probs = log_probs * self.weight.unsqueeze(0)
+        loss = -(targets * log_probs).sum(dim=1)
+        return loss.mean()
+
+
 class FocalLoss(nn.Module):
     """Focal loss for logits shaped [batch, num_classes] (binary or multi-class)."""
 
@@ -84,6 +104,8 @@ def build_loss(
 
     if loss_name == "ce":
         return nn.CrossEntropyLoss(weight=weights)
+    if loss_name == "soft_ce":
+        return SoftCrossEntropyLoss(weight=weights)
     if loss_name == "focal":
         return FocalLoss(gamma=focal_gamma, alpha=weights)
-    raise ValueError("loss must be one of: ce, focal")
+    raise ValueError("loss must be one of: ce, soft_ce, focal")

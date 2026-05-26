@@ -7,12 +7,13 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+import open_clip
 import torch
 import wandb
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import auc, roc_curve
 from torch import nn
 from torch.utils.data import DataLoader
-from torchvision import models, transforms
+from torchvision import transforms
 
 from losses import build_loss
 from zone_dataset import (
@@ -24,17 +25,20 @@ from zone_dataset import (
 )
 
 
-IMAGENET_MEAN = (0.485, 0.456, 0.406)
-IMAGENET_STD = (0.229, 0.224, 0.225)
+CLIP_MODEL_NAME = "convnext_large_d_320"
+CLIP_PRETRAINED = "laion2b_s29b_b131k_ft_soup"
+CLIP_OUTPUT_DIM = 768
+CLIP_MEAN = (0.48145466, 0.4578275, 0.40821073)
+CLIP_STD = (0.26862954, 0.26130258, 0.27577711)
 
-NUM_ZONES = 10  # zone numbers are 1..10; embedding table has NUM_ZONES + 1 slots
+NUM_ZONES = 10
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=(
-            "Train a ConvNeXt binary zone-label classifier from zone_training_table.csv "
-            "(Zone_Label 0 vs 1+2 merged to {0,1})."
+            "Train an OpenCLIP ConvNeXt-Large-D binary zone-label classifier from "
+            "zone_training_table.csv (Zone_Label 0 vs 1+2 merged to {0,1})."
         )
     )
     parser.add_argument(
@@ -52,7 +56,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("runs") / "convnext_zone_classifier",
+        default=Path("runs") / "clip_convnext_zone_classifier",
         help="Directory for checkpoints and metrics.",
     )
     parser.add_argument(
@@ -75,27 +79,42 @@ def parse_args() -> argparse.Namespace:
         default=2,
         help="Must be 2 for the binary zone task (default: 2).",
     )
-    parser.add_argument("--epochs", type=int, default=15)
+    parser.add_argument("--epochs", type=int, default=25)
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument(
         "--lr",
         type=float,
         default=1e-4,
-        help="Classifier-head learning rate. Backbone is trained at lr * 0.1.",
+        help="Classifier-head learning rate. Backbone is trained at lr * 0.05.",
     )
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--num-workers", type=int, default=8)
-    parser.add_argument("--image-size", type=int, default=288)
+    parser.add_argument("--image-size", type=int, default=320)
     parser.add_argument("--seed", type=int, default=13)
     parser.add_argument("--split-attempts", type=int, default=10_000)
+    parser.add_argument(
+        "--freeze-backbone-epochs",
+        type=int,
+        default=5,
+        help="Freeze the visual tower for this many initial epochs.",
+    )
+    parser.add_argument(
+        "--grad-clip-norm",
+        type=float,
+        default=1.0,
+        help=(
+            "Max global gradient norm passed to clip_grad_norm_. Set to 0 or "
+            "negative to disable clipping (default: 1.0)."
+        ),
+    )
+    parser.add_argument("--no-amp", action="store_true", help="Disable CUDA mixed precision.")
     parser.add_argument(
         "--zone-embed-dim",
         type=int,
         default=64,
         help=(
             "Dimensionality of the learned per-zone embedding concatenated with "
-            "image features before the classifier head. Set to 0 to disable "
-            "zone-conditioning."
+            "CLIP image features before the classifier head. Set to 0 to disable."
         ),
     )
     parser.add_argument(
@@ -110,23 +129,8 @@ def parse_args() -> argparse.Namespace:
         default=8,
         help="Early-stopping patience in epochs (counted on val macro-F1).",
     )
-    parser.add_argument(
-        "--grad-clip-norm",
-        type=float,
-        default=1.0,
-        help=(
-            "Max global gradient norm passed to clip_grad_norm_. Set to 0 or "
-            "negative to disable clipping (default: 1.0)."
-        ),
-    )
-    parser.add_argument("--no-pretrained", action="store_true")
-    parser.add_argument(
-        "--no-amp",
-        action="store_true",
-        help="Disable CUDA mixed-precision training.",
-    )
     parser.add_argument("--wandb-project", type=str, default="uveitis-per-zone")
-    parser.add_argument("--wandb-run-name", type=str, default=None)
+    parser.add_argument("--wandb-run-name", type=str, default="clip-convnext-large-d-320")
     parser.add_argument("--no-wandb", action="store_true", help="Disable W&B logging.")
     return parser.parse_args()
 
@@ -136,67 +140,47 @@ def seed_everything(seed: int) -> None:
     torch.cuda.manual_seed_all(seed)
 
 
-def build_transforms(image_size: int) -> tuple[transforms.Compose, transforms.Compose]:
-    # After OS-flipping in preprocessing the anatomy is OD-aligned but each
-    # zone crop is rotationally roughly symmetric, so we keep rotation/flips
-    # but tone down ColorJitter (hue/saturation perturbations can erase the
-    # subtle color cues that uveitis findings rely on).
-    train_transform = transforms.Compose([
+def build_train_transform(image_size: int) -> transforms.Compose:
+    return transforms.Compose([
         transforms.RandomResizedCrop(
-            image_size, scale=(0.75, 1.0),
+            image_size,
+            scale=(0.7, 1.0),
             interpolation=transforms.InterpolationMode.BICUBIC,
         ),
         transforms.RandomHorizontalFlip(),
         transforms.RandomVerticalFlip(),
-        transforms.RandomRotation(20),
-        transforms.ColorJitter(brightness=0.15, contrast=0.15),
+        transforms.RandomRotation(30),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.1, hue=0.05),
         transforms.ToTensor(),
-        transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
-        transforms.RandomErasing(p=0.15, scale=(0.02, 0.1)),
+        transforms.Normalize(CLIP_MEAN, CLIP_STD),
+        transforms.RandomErasing(p=0.2),
     ])
-    eval_transform = transforms.Compose([
-        transforms.Resize(
-            (image_size, image_size),
-            interpolation=transforms.InterpolationMode.BICUBIC,
-        ),
-        transforms.ToTensor(),
-        transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
-    ])
-    return train_transform, eval_transform
 
 
-class ZoneAwareConvNeXt(nn.Module):
-    """ConvNeXt backbone with a classifier head that also consumes ``zone_number``.
+class ClipConvNeXtClassifier(nn.Module):
+    """OpenCLIP ConvNeXt-Large-D visual tower + zone-aware classifier head.
 
-    The model receives ``(image, zone_number)`` per sample. Image features come
-    out of the standard ConvNeXt avgpool+flatten stack; ``zone_number`` (1..10)
-    is mapped through a small learned embedding table and concatenated with
-    the visual features before the final MLP. This lets a single model learn
-    zone-conditional decision boundaries (zone-7/8/10 distributions differ
-    sharply from zone-1/2/3/4) instead of pretending all zones look the same.
+    ``zone_numbers`` (1..10) gets embedded and concatenated with the visual
+    features before the classifier MLP. The model conditions its output on the
+    requested anatomical zone instead of treating each zone crop identically.
     """
 
     def __init__(
         self,
+        visual: nn.Module,
         num_classes: int,
-        pretrained: bool,
-        zone_embed_dim: int,
-        head_hidden: int,
+        zone_embed_dim: int = 64,
+        head_hidden: int = 256,
     ) -> None:
         super().__init__()
-        weights = models.ConvNeXt_Tiny_Weights.DEFAULT if pretrained else None
-        backbone = models.convnext_tiny(weights=weights)
-        in_features = backbone.classifier[-1].in_features
-        # Keep features + avgpool + flatten + layernorm; drop the final Linear.
-        backbone.classifier[-1] = nn.Identity()
-        self.backbone = backbone
+        self.visual = visual
         self.zone_embed_dim = zone_embed_dim
         if zone_embed_dim > 0:
             self.zone_embedding = nn.Embedding(NUM_ZONES + 1, zone_embed_dim)
-            head_in = in_features + zone_embed_dim
+            head_in = CLIP_OUTPUT_DIM + zone_embed_dim
         else:
             self.zone_embedding = None
-            head_in = in_features
+            head_in = CLIP_OUTPUT_DIM
 
         if head_hidden > 0:
             self.classifier = nn.Sequential(
@@ -214,33 +198,61 @@ class ZoneAwareConvNeXt(nn.Module):
                 nn.Linear(head_in, num_classes),
             )
 
-    @property
-    def features(self) -> nn.Module:
-        # Surface the conv stack so the optimizer can split lr groups.
-        return self.backbone.features
-
-    def forward(self, images: torch.Tensor, zone_numbers: torch.Tensor) -> torch.Tensor:
-        image_features = self.backbone(images)
+    def forward(
+        self, images: torch.Tensor, zone_numbers: torch.Tensor
+    ) -> torch.Tensor:
+        features = self.visual(images)
+        if isinstance(features, tuple):
+            features = features[0]
+        if features.ndim > 2:
+            features = torch.flatten(features, start_dim=1)
         if self.zone_embedding is not None:
             zone_features = self.zone_embedding(zone_numbers)
-            features = torch.cat([image_features, zone_features], dim=1)
-        else:
-            features = image_features
+            features = torch.cat([features, zone_features], dim=1)
         return self.classifier(features)
 
 
-def build_model(
+def visual_output_dim(visual: nn.Module) -> int | None:
+    head_mlp = getattr(getattr(visual, "head", None), "mlp", None)
+    head_fc2 = getattr(head_mlp, "fc2", None)
+    out_features = getattr(head_fc2, "out_features", None)
+    return int(out_features) if out_features is not None else None
+
+
+def build_model_and_eval_transform(
     num_classes: int,
-    pretrained: bool,
     zone_embed_dim: int = 64,
     head_hidden: int = 256,
-) -> ZoneAwareConvNeXt:
-    return ZoneAwareConvNeXt(
-        num_classes=num_classes,
-        pretrained=pretrained,
+) -> tuple[ClipConvNeXtClassifier, transforms.Compose]:
+    clip_model, _, eval_transform = open_clip.create_model_and_transforms(
+        CLIP_MODEL_NAME,
+        pretrained=CLIP_PRETRAINED,
+    )
+    visual = clip_model.visual
+    output_dim = visual_output_dim(visual)
+    if output_dim != CLIP_OUTPUT_DIM:
+        raise ValueError(
+            f"Expected {CLIP_MODEL_NAME} visual output dim {CLIP_OUTPUT_DIM}, got {output_dim}."
+        )
+    del clip_model
+    model = ClipConvNeXtClassifier(
+        visual,
+        num_classes,
         zone_embed_dim=zone_embed_dim,
         head_hidden=head_hidden,
     )
+    return model, eval_transform
+
+
+def set_backbone_trainable(model: ClipConvNeXtClassifier, trainable: bool) -> None:
+    for parameter in model.visual.parameters():
+        parameter.requires_grad = trainable
+
+
+def parameter_counts(model: nn.Module) -> tuple[int, int]:
+    trainable = sum(parameter.numel() for parameter in model.parameters() if parameter.requires_grad)
+    frozen = sum(parameter.numel() for parameter in model.parameters() if not parameter.requires_grad)
+    return trainable, frozen
 
 
 def batch_to_device(
@@ -316,7 +328,7 @@ def run_epoch(
     optimizer: torch.optim.Optimizer | None = None,
     return_probs: bool = False,
     grad_clip_norm: float | None = None,
-    scaler: "torch.amp.GradScaler | None" = None,
+    scaler: torch.cuda.amp.GradScaler | None = None,
     use_amp: bool = False,
 ) -> dict[str, Any] | tuple[dict[str, Any], list]:
     is_train = optimizer is not None
@@ -338,8 +350,8 @@ def run_epoch(
                 optimizer.zero_grad(set_to_none=True)
                 if scaler is not None and use_amp:
                     scaler.scale(loss).backward()
+                    scaler.unscale_(optimizer)
                     if grad_clip_norm is not None and grad_clip_norm > 0:
-                        scaler.unscale_(optimizer)
                         torch.nn.utils.clip_grad_norm_(
                             model.parameters(), max_norm=grad_clip_norm
                         )
@@ -411,7 +423,15 @@ def main() -> int:
     val_records = records_for_patients(records, split["val"])
     test_records = records_for_patients(records, split["test"])
 
-    train_transform, eval_transform = build_transforms(args.image_size)
+    model, eval_transform = build_model_and_eval_transform(
+        args.num_classes,
+        zone_embed_dim=args.zone_embed_dim,
+        head_hidden=args.head_hidden,
+    )
+    train_transform = build_train_transform(args.image_size)
+    set_backbone_trainable(model, trainable=args.freeze_backbone_epochs <= 0)
+    model = model.to(device)
+
     train_loader = DataLoader(
         ZoneImageDataset(train_records, train_transform),
         batch_size=args.batch_size,
@@ -434,12 +454,6 @@ def main() -> int:
         pin_memory=device.type == "cuda",
     )
 
-    model = build_model(
-        args.num_classes,
-        pretrained=not args.no_pretrained,
-        zone_embed_dim=args.zone_embed_dim,
-        head_hidden=args.head_hidden,
-    ).to(device)
     criterion = build_loss(
         args.loss,
         labels_for(train_records),
@@ -450,7 +464,7 @@ def main() -> int:
     )
     optimizer = torch.optim.AdamW(
         [
-            {"params": model.features.parameters(), "lr": args.lr * 0.1, "name": "backbone"},
+            {"params": model.visual.parameters(), "lr": args.lr * 0.05, "name": "backbone"},
             {"params": model.classifier.parameters(), "lr": args.lr, "name": "classifier"},
         ],
         weight_decay=args.weight_decay,
@@ -465,24 +479,33 @@ def main() -> int:
     best_path = args.output_dir / "best.pt"
     history: list[dict[str, Any]] = []
 
-    print(f"Device: {device} | AMP: {use_amp}")
+    trainable_params, frozen_params = parameter_counts(model)
+    print(f"Device: {device}")
     print(f"Loss: {args.loss} class_weighting={args.class_weighting}")
     print(
-        f"Image size: {args.image_size} | zone_embed_dim: {args.zone_embed_dim} | "
-        f"head_hidden: {args.head_hidden} | epochs: {args.epochs} | "
-        f"batch_size: {args.batch_size} | patience: {args.patience}"
+        f"Backbone: {CLIP_MODEL_NAME} | pretrained={CLIP_PRETRAINED} | "
+        f"output_dim={CLIP_OUTPUT_DIM} | trainable_params={trainable_params:,} | "
+        f"frozen_params={frozen_params:,}"
     )
     print(
         f"Scheduler: cosine | "
-        f"Head LR: {args.lr} | Backbone LR: {args.lr * 0.1} | "
-        f"grad_clip_norm: {args.grad_clip_norm}"
+        f"Head LR: {args.lr} | Backbone LR: {args.lr * 0.05} | "
+        f"grad_clip_norm: {args.grad_clip_norm} | amp: {use_amp}"
     )
     print(f"Split: {json.dumps(split)}")
 
     patience = args.patience
     no_improve_count = 0
+    backbone_is_trainable = args.freeze_backbone_epochs <= 0
 
     for epoch in range(1, args.epochs + 1):
+        should_train_backbone = epoch > args.freeze_backbone_epochs
+        if should_train_backbone != backbone_is_trainable:
+            set_backbone_trainable(model, trainable=should_train_backbone)
+            backbone_is_trainable = should_train_backbone
+            status = "unfrozen" if should_train_backbone else "frozen"
+            print(f"Backbone {status} at epoch {epoch}")
+
         train_metrics = run_epoch(
             model,
             train_loader,
@@ -622,7 +645,7 @@ def main() -> int:
                     roc_table,
                     "FPR",
                     "TPR",
-                    title=f"ROC Curve — Class {class_idx} (AUC={roc_auc:.3f})",
+                    title=f"ROC Curve - Class {class_idx} (AUC={roc_auc:.3f})",
                 )
             })
 

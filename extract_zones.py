@@ -22,12 +22,8 @@ from PIL import Image, ImageDraw
 
 try:
     import cv2
-except Exception as exc:
-    raise ImportError(
-        "OpenCV (cv2) failed to import.\n\n"
-        "Install it with:\n"
-        "  pip install opencv-python\n"
-    ) from exc
+except Exception:
+    cv2 = None
 
 # ---------------------------------------------------------------------------
 # Defaults (same as original slicer CLI defaults)
@@ -44,6 +40,15 @@ ONH_RX = 80
 ONH_RY = 95
 
 __all__ = ["extract", "make_zone_mask", "apply_zone_and_crop", "ZONE_NAMES"]
+
+
+def _require_cv2() -> None:
+    if cv2 is None:
+        raise ImportError(
+            "OpenCV (cv2) is required for yellow-overlay detection/removal.\n\n"
+            "Install it with:\n"
+            "  pip install opencv-python\n"
+        )
 
 
 # Zone-number -> human name (1-indexed, matches make_masks dict order when sorted).
@@ -91,6 +96,7 @@ def make_yellow_mask(arr):
 
 
 def remove_yellow_overlay(arr, inpaint_radius=3, dilate_iterations=1):
+    _require_cv2()
     yellow = make_yellow_mask(arr)
     if int(yellow.sum()) == 0:
         return arr.copy()
@@ -127,6 +133,7 @@ def normalize_angle_deg(angle):
 
 
 def detect_crosshair_from_yellow(arr, output_dir=None, save_debug=False):
+    _require_cv2()
     H, W = arr.shape[:2]
     yellow = make_yellow_mask(arr)
     yellow_count = int(yellow.sum())

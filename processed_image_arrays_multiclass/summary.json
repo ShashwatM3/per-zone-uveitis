@@ -1,0 +1,101 @@
+{
+  "input_data_dir": "/home/shashwat/per-zone-uveitis/data",
+  "output_dir": "/home/shashwat/per-zone-uveitis/processed_image_arrays_multiclass",
+  "binary_zone_labels": false,
+  "workers": 1,
+  "force": false,
+  "annotations_xlsx": "/home/shashwat/per-zone-uveitis/data/UWF_FP_Annotations_2.8.2026 Names removed.xlsx",
+  "zone_table": "/home/shashwat/per-zone-uveitis/processed_image_arrays_multiclass/zone_training_table.csv",
+  "stats": {
+    "fp_total_in_data": 792,
+    "fp_matched": 0,
+    "fp_unmatched": 325,
+    "fp_cached_hits": 0,
+    "fp_processed": 0,
+    "fp_errors": 467,
+    "zones_written": 0
+  },
+  "errors_sample": [
+    {
+      "fp_path": "data/Patient010/20240723/Patient010_20240723_OD_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient010/20240723/Patient010_20240723_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient011/20210615/Patient011_20210615_OD_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient011/20210615/Patient011_20210615_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient011/20210914/Patient011_20210914_OD_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient011/20210914/Patient011_20210914_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient011/20250506/Patient011_20250506_OD_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient011/20250506/Patient011_20250506_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient012/20210330/Patient012_20210330_OD_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient013/20210921/Patient013_20210921_OD_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient013/20210921/Patient013_20210921_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient014/20210119/Patient014_20210119_OD_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient014/20210119/Patient014_20210119_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient015/20231212/Patient015_20231212_OD_FP_0000.jpg",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient015/20231212/Patient015_20231212_OS_FP_0000.jpg",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient016/20210202/Patient016_20210202_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient016/20210614/Patient016_20210614_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient016/20220809/Patient016_20220809_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient016/20231107/Patient016_20231107_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    },
+    {
+      "fp_path": "data/Patient016/20240423/Patient016_20240423_OS_FP_0000.png",
+      "error": "ImportError: OpenCV (cv2) failed to import.\n\nInstall it with:\n  pip install opencv-python\n"
+    }
+  ],
+  "error_count": 467
+}

@@ -8,3 +8,4 @@ Canonical split: `splits/canonical_split.json` (from baseline run, seed=13).
 |-----|------|------------|---------------|-----------|----------|
 | — | (prior best) | — | 0.5251 | — | — |
 | 1 | protocol_r01_convnext_soft_ce | Soft CE + multiclass soft labels | 0.4849 | -0.0402 | No improvement; val~test → try CLIP (exp 2) |
+| 2 | (pending) protocol_r02_clip_default | CLIP Large-D defaults, binary 20ep | — | — | — |

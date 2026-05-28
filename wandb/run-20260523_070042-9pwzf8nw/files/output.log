@@ -1,7 +1,0 @@
-/home/shashwat/per-zone-uveitis/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:187: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12020). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
-  return torch._C._cuda_getDeviceCount() > 0
-Device: cpu
-Loss: ce class_weighting=inverse
-Split: {"train": [11, 12, 13, 15, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 29, 33, 34, 36, 37, 38, 40, 43, 44, 45, 47, 48, 49, 52, 54, 55, 56, 57, 59, 61, 63, 64, 65, 66, 67, 68, 70, 71, 72, 74, 75, 76, 78, 79, 81, 83, 84, 85, 86, 88, 89, 90, 91, 93, 95, 97], "val": [16, 25, 31, 39, 41, 46, 50, 58, 60, 62, 77, 92, 98], "test": [10, 14, 28, 30, 35, 42, 69, 73, 80, 82, 87, 96, 99]}
-epoch=001 train_loss=0.6979 val_loss=0.7402 val_macro_f1=0.4396 val_bal_acc=0.4726
-epoch=002 train_loss=0.6777 val_loss=0.7425 val_macro_f1=0.4952 val_bal_acc=0.4958

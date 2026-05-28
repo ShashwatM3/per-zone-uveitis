@@ -293,16 +293,21 @@ def _load_zone_image(record: ZoneRecord) -> Image.Image:
     return Image.fromarray(zone_rgba, mode="RGBA").convert("RGB")
 
 
+TIER_CONFIDENCE_WEIGHTS = {0: 1.0, 1: 0.3, 2: 1.0}
+
+
 class ZoneImageDataset(Dataset):
     def __init__(
         self,
         records: list[ZoneRecord],
         transform: Callable | None = None,
         soft_labels: bool = False,
+        tier_confidence_weights: bool = False,
     ) -> None:
         self.records = records
         self.transform = transform
         self.soft_labels = soft_labels
+        self.tier_confidence_weights = tier_confidence_weights
 
     def __len__(self) -> int:
         return len(self.records)
@@ -316,10 +321,13 @@ class ZoneImageDataset(Dataset):
             label = torch.tensor(SOFT_TARGETS[record.raw_label], dtype=torch.float32)
         else:
             label = record.label
-        return {
+        out = {
             "image": image,
             "label": label,
             "patient_id": record.patient_id,
             "zone_number": record.zone_number,
             "image_path": str(record.image_path),
         }
+        if self.tier_confidence_weights:
+            out["sample_weight"] = TIER_CONFIDENCE_WEIGHTS[record.raw_label]
+        return out

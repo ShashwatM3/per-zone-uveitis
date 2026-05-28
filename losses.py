@@ -46,7 +46,12 @@ class FocalLoss(nn.Module):
         else:
             self.alpha = None
 
-    def forward(self, logits: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self,
+        logits: torch.Tensor,
+        targets: torch.Tensor,
+        sample_weight: torch.Tensor | None = None,
+    ) -> torch.Tensor:
         log_probs = F.log_softmax(logits, dim=1)
         log_pt = log_probs.gather(1, targets.unsqueeze(1)).squeeze(1)
         pt = log_pt.exp()
@@ -55,6 +60,9 @@ class FocalLoss(nn.Module):
         if self.alpha is not None:
             loss = loss * self.alpha.gather(0, targets)
 
+        if sample_weight is not None:
+            weight = sample_weight.float()
+            return (loss * weight).sum() / weight.sum().clamp(min=1e-8)
         if self.reduction == "mean":
             return loss.mean()
         if self.reduction == "sum":

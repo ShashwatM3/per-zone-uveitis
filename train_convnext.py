@@ -7,6 +7,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any
 
+import timm
 import torch
 import wandb
 from sklearn.metrics import roc_curve, auc
@@ -128,6 +129,12 @@ def parse_args() -> argparse.Namespace:
             "negative to disable clipping (default: 1.0)."
         ),
     )
+    parser.add_argument(
+        "--backbone",
+        choices=("convnext_tiny", "efficientnet_b3"),
+        default="convnext_tiny",
+        help="Visual backbone (efficientnet_b3 uses timm ImageNet-21k weights).",
+    )
     parser.add_argument("--no-pretrained", action="store_true")
     parser.add_argument(
         "--no-amp",
@@ -144,6 +151,36 @@ def parse_args() -> argparse.Namespace:
             "Use soft tier targets [1,0]/[0.5,0.5]/[0,1] for training only. "
             "Requires the multiclass CSV with raw 0/1/2 Zone_Label values."
         ),
+    )
+    parser.add_argument(
+        "--exclude-tier1",
+        action="store_true",
+        help=(
+            "Exclude tier-1 (raw_label==1) samples from training only. "
+            "Validation/test are left unchanged for fair comparison."
+        ),
+    )
+    parser.add_argument(
+        "--balanced-batches",
+        action="store_true",
+        help=(
+            "Use class-balanced WeightedRandomSampler (BBFL batch-balancing). "
+            "Mutually exclusive with --positive-oversample-factor > 1."
+        ),
+    )
+    parser.add_argument(
+        "--tier-confidence-weights",
+        action="store_true",
+        help=(
+            "Down-weight tier-1 (ambiguous) samples in the loss (0.3 vs 1.0 for tier 0/2). "
+            "Requires multiclass CSV with raw 0/1/2 labels."
+        ),
+    )
+    parser.add_argument(
+        "--mixup-alpha",
+        type=float,
+        default=0.0,
+        help="MixUp Beta(alpha, alpha) on training batches; 0 disables (Branch D4).",
     )
     return parser.parse_args()
 
@@ -180,6 +217,63 @@ def build_transforms(image_size: int) -> tuple[transforms.Compose, transforms.Co
         transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
     ])
     return train_transform, eval_transform
+
+
+class ZoneAwareTimmBackbone(nn.Module):
+    """timm backbone (e.g. EfficientNet-B3) + zone embedding + MLP head."""
+
+    def __init__(
+        self,
+        backbone_name: str,
+        num_classes: int,
+        pretrained: bool,
+        zone_embed_dim: int,
+        head_hidden: int,
+    ) -> None:
+        super().__init__()
+        self.backbone = timm.create_model(
+            backbone_name,
+            pretrained=pretrained,
+            num_classes=0,
+            global_pool="avg",
+        )
+        in_features = self.backbone.num_features
+        self.zone_embed_dim = zone_embed_dim
+        if zone_embed_dim > 0:
+            self.zone_embedding = nn.Embedding(NUM_ZONES + 1, zone_embed_dim)
+            head_in = in_features + zone_embed_dim
+        else:
+            self.zone_embedding = None
+            head_in = in_features
+
+        if head_hidden > 0:
+            self.classifier = nn.Sequential(
+                nn.LayerNorm(head_in),
+                nn.Dropout(p=0.3),
+                nn.Linear(head_in, head_hidden),
+                nn.GELU(),
+                nn.Dropout(p=0.2),
+                nn.Linear(head_hidden, num_classes),
+            )
+        else:
+            self.classifier = nn.Sequential(
+                nn.LayerNorm(head_in),
+                nn.Dropout(p=0.3),
+                nn.Linear(head_in, num_classes),
+            )
+
+    @property
+    def features(self) -> nn.Module:
+        return self.backbone
+
+    def forward(self, images: torch.Tensor, zone_numbers: torch.Tensor) -> torch.Tensor:
+        image_features = self.backbone(images)
+        if self.zone_embedding is not None:
+            zone_features = self.zone_embedding(zone_numbers)
+            features = torch.cat([image_features, zone_features], dim=1)
+        else:
+            features = image_features
+        return self.classifier(features)
 
 
 class ZoneAwareConvNeXt(nn.Module):
@@ -251,24 +345,38 @@ def build_model(
     pretrained: bool,
     zone_embed_dim: int = 64,
     head_hidden: int = 256,
-) -> ZoneAwareConvNeXt:
-    return ZoneAwareConvNeXt(
-        num_classes=num_classes,
-        pretrained=pretrained,
-        zone_embed_dim=zone_embed_dim,
-        head_hidden=head_hidden,
-    )
+    backbone: str = "convnext_tiny",
+) -> nn.Module:
+    if backbone == "convnext_tiny":
+        return ZoneAwareConvNeXt(
+            num_classes=num_classes,
+            pretrained=pretrained,
+            zone_embed_dim=zone_embed_dim,
+            head_hidden=head_hidden,
+        )
+    if backbone == "efficientnet_b3":
+        return ZoneAwareTimmBackbone(
+            backbone_name="efficientnet_b3.ra2_in1k",
+            num_classes=num_classes,
+            pretrained=pretrained,
+            zone_embed_dim=zone_embed_dim,
+            head_hidden=head_hidden,
+        )
+    raise ValueError(f"Unknown backbone: {backbone}")
 
 
 def batch_to_device(
     batch: dict[str, Any], device: torch.device
-) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor | None]:
     images = batch["image"].to(device)
     labels = batch["label"].to(device)
     if labels.dtype != torch.float32:
         labels = labels.long()
     zones = batch["zone_number"].to(device, dtype=torch.long)
-    return images, labels, zones
+    sample_weight = batch.get("sample_weight")
+    if sample_weight is not None:
+        sample_weight = sample_weight.to(device, dtype=torch.float32)
+    return images, labels, zones, sample_weight
 
 
 def update_confusion(
@@ -337,6 +445,7 @@ def run_epoch(
     grad_clip_norm: float | None = None,
     scaler: "torch.amp.GradScaler | None" = None,
     use_amp: bool = False,
+    mixup_alpha: float = 0.0,
 ) -> dict[str, Any] | tuple[dict[str, Any], list]:
     is_train = optimizer is not None
     model.train(is_train)
@@ -348,13 +457,34 @@ def run_epoch(
     grad_context = torch.enable_grad() if is_train else torch.inference_mode()
     with grad_context:
         for batch in loader:
-            images, labels, zones = batch_to_device(batch, device)
+            images, labels, zones, sample_weight = batch_to_device(batch, device)
             with torch.amp.autocast(device_type=device.type, enabled=use_amp):
-                logits = model(images, zones)
-                loss = criterion(logits, labels)
+                if (
+                    is_train
+                    and mixup_alpha > 0
+                    and labels.dtype != torch.float32
+                    and images.size(0) > 1
+                ):
+                    lam = float(torch.distributions.Beta(mixup_alpha, mixup_alpha).sample().item())
+                    index = torch.randperm(images.size(0), device=device)
+                    mixed_images = lam * images + (1.0 - lam) * images[index]
+                    logits = model(mixed_images, zones)
+                    loss_a = criterion(logits, labels)
+                    loss_b = criterion(logits, labels[index])
+                    loss = lam * loss_a + (1.0 - lam) * loss_b
+                    hard_labels = labels
+                else:
+                    logits = model(images, zones)
+                    if sample_weight is not None and hasattr(criterion, "forward"):
+                        try:
+                            loss = criterion(logits, labels, sample_weight=sample_weight)
+                        except TypeError:
+                            loss = criterion(logits, labels)
+                    else:
+                        loss = criterion(logits, labels)
+                    hard_labels = labels.argmax(dim=1) if labels.dtype == torch.float32 else labels
 
             hard_preds = logits.argmax(dim=1)
-            hard_labels = labels.argmax(dim=1) if labels.dtype == torch.float32 else labels
 
             if is_train:
                 optimizer.zero_grad(set_to_none=True)
@@ -432,12 +562,40 @@ def main() -> int:
     train_records = records_for_patients(records, split["train"])
     val_records = records_for_patients(records, split["val"])
     test_records = records_for_patients(records, split["test"])
+    if args.exclude_tier1:
+        has_tier2 = any(record.raw_label == 2 for record in train_records)
+        if not has_tier2:
+            raise SystemExit(
+                "--exclude-tier1 requires multiclass source labels (0/1/2). "
+                "Use processed_image_arrays_multiclass CSV/data-root."
+            )
+        train_records = [record for record in train_records if record.raw_label != 1]
 
     train_transform, eval_transform = build_transforms(args.image_size)
-    train_dataset = ZoneImageDataset(train_records, train_transform, soft_labels=args.soft_labels)
+    train_dataset = ZoneImageDataset(
+        train_records,
+        train_transform,
+        soft_labels=args.soft_labels,
+        tier_confidence_weights=args.tier_confidence_weights,
+    )
     train_sampler = None
     train_shuffle = True
-    if args.positive_oversample_factor > 1.0:
+    if args.balanced_batches and args.positive_oversample_factor > 1.0:
+        raise SystemExit(
+            "Use either --balanced-batches or --positive-oversample-factor > 1, not both."
+        )
+    if args.balanced_batches:
+        label_counts = Counter(labels_for(train_records))
+        sample_weights = [
+            1.0 / label_counts[record.label] for record in train_records
+        ]
+        train_sampler = WeightedRandomSampler(
+            weights=torch.as_tensor(sample_weights, dtype=torch.double),
+            num_samples=len(sample_weights),
+            replacement=True,
+        )
+        train_shuffle = False
+    elif args.positive_oversample_factor > 1.0:
         sample_weights = [
             float(args.positive_oversample_factor) if record.label == 1 else 1.0
             for record in train_records
@@ -477,6 +635,7 @@ def main() -> int:
         pretrained=not args.no_pretrained,
         zone_embed_dim=args.zone_embed_dim,
         head_hidden=args.head_hidden,
+        backbone=args.backbone,
     ).to(device)
     criterion = build_loss(
         args.loss,
@@ -531,6 +690,7 @@ def main() -> int:
             grad_clip_norm=args.grad_clip_norm,
             scaler=scaler,
             use_amp=use_amp,
+            mixup_alpha=args.mixup_alpha,
         )
         val_metrics = run_epoch(
             model,

@@ -22,3 +22,7 @@ Sample 2.5.2026/
 
 processed_image_arrays/
 runs/
+
+RETFound_mae_natureCFP/
+PROTOCOLS/
+weights/

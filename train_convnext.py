@@ -11,7 +11,7 @@ import torch
 import wandb
 from sklearn.metrics import roc_curve, auc
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, WeightedRandomSampler
 from torchvision import models, transforms
 
 from losses import build_loss
@@ -85,6 +85,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--num-workers", type=int, default=8)
+    parser.add_argument(
+        "--positive-oversample-factor",
+        type=float,
+        default=1.0,
+        help=(
+            "Relative sampling weight multiplier for positive-class (label=1) training "
+            "examples. Set to 2.0 for 2x positive oversampling; 1.0 disables oversampling."
+        ),
+    )
     parser.add_argument("--image-size", type=int, default=288)
     parser.add_argument("--seed", type=int, default=13)
     parser.add_argument("--split-attempts", type=int, default=10_000)
@@ -425,10 +434,26 @@ def main() -> int:
     test_records = records_for_patients(records, split["test"])
 
     train_transform, eval_transform = build_transforms(args.image_size)
+    train_dataset = ZoneImageDataset(train_records, train_transform, soft_labels=args.soft_labels)
+    train_sampler = None
+    train_shuffle = True
+    if args.positive_oversample_factor > 1.0:
+        sample_weights = [
+            float(args.positive_oversample_factor) if record.label == 1 else 1.0
+            for record in train_records
+        ]
+        train_sampler = WeightedRandomSampler(
+            weights=torch.as_tensor(sample_weights, dtype=torch.double),
+            num_samples=len(sample_weights),
+            replacement=True,
+        )
+        train_shuffle = False
+
     train_loader = DataLoader(
-        ZoneImageDataset(train_records, train_transform, soft_labels=args.soft_labels),
+        train_dataset,
         batch_size=args.batch_size,
-        shuffle=True,
+        shuffle=train_shuffle,
+        sampler=train_sampler,
         num_workers=args.num_workers,
         pin_memory=device.type == "cuda",
     )

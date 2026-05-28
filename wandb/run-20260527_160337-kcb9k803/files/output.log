@@ -1,0 +1,9 @@
+/home/shashwat/miniconda3/lib/python3.13/site-packages/torch/cuda/__init__.py:187: UserWarning: CUDA initialization: The NVIDIA driver on your system is too old (found version 12020). Please update your GPU driver by downloading and installing a new version from the URL: http://www.nvidia.com/Download/index.aspx Alternatively, go to: https://pytorch.org to install a PyTorch version that has been compiled with your version of the CUDA driver. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+Device: cpu | AMP: False
+Loss: soft_ce class_weighting=inverse
+Image size: 288 | zone_embed_dim: 64 | head_hidden: 256 | epochs: 20 | batch_size: 32 | patience: 8
+Scheduler: cosine | Head LR: 0.0001 | Backbone LR: 1e-05 | grad_clip_norm: 1.0
+Split: {"train": [12, 13, 15, 17, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 43, 45, 48, 49, 50, 51, 52, 54, 55, 58, 59, 61, 62, 63, 64, 65, 66, 67, 68, 70, 73, 74, 75, 77, 78, 81, 82, 83, 85, 86, 88, 89, 90, 91, 93, 94, 97, 98, 304], "val": [16, 18, 19, 28, 46, 47, 56, 60, 69, 71, 72, 79, 95, 340], "test": [10, 11, 14, 20, 39, 44, 57, 76, 80, 84, 87, 92, 96, 99]}
+epoch=001 train_loss=0.6649 val_loss=0.6896 val_macro_f1=0.5138 val_bal_acc=0.5253 lr_backbone=1.00e-05 lr_classifier=1.00e-04
+epoch=001 val/per_class={'0': {'precision': 0.5671077504725898, 'recall': 0.7281553398058253, 'f1': 0.6376195536663124, 'specificity': 0.3224852071005917}, '1': {'precision': 0.49321266968325794, 'recall': 0.3224852071005917, 'f1': 0.3899821109123434, 'specificity': 0.7281553398058253}}

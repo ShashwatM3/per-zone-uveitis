@@ -1,0 +1,207 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        e:
+            4hvbhl8zerax05ck75rn7cgsln1qujdl:
+                args:
+                    - --csv
+                    - processed_image_arrays_multiclass/zone_training_table.csv
+                    - --data-root
+                    - processed_image_arrays_multiclass
+                    - --loss
+                    - soft_ce
+                    - --soft-labels
+                    - --epochs
+                    - "20"
+                    - --batch-size
+                    - "32"
+                    - --num-workers
+                    - "8"
+                    - --output-dir
+                    - runs/protocol_r01_convnext_soft_ce
+                    - --split-json
+                    - splits/canonical_split.json
+                    - --wandb-project
+                    - uveitis-per-zone
+                    - --wandb-run-name
+                    - protocol_r01_convnext_soft_ce
+                codePath: train_convnext.py
+                codePathLocal: train_convnext.py
+                cpu_count: 32
+                cpu_count_logical: 64
+                cudaVersion: "12.2"
+                disk:
+                    /:
+                        total: "1967317549056"
+                        used: "1854466220032"
+                email: smahalanobis@ucdavis.edu
+                executable: /home/shashwat/miniconda3/envs/venv/bin/python
+                git:
+                    commit: d4ad6f7c123777bfd4fc2f3f0eb22a8e28b35974
+                    remote: git@github.com:ShashwatM3/per-zone-uveitis.git
+                gpu: NVIDIA RTX A6000
+                gpu_count: 4
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 10752
+                      memoryTotal: "51527024640"
+                      name: NVIDIA RTX A6000
+                      uuid: GPU-55027106-acc5-6086-f8b1-a72d84114dcc
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-38449083-9098-a1f2-0255-b3557b9de81c
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-93fb7751-a4f3-0d8b-a900-bd27eb9db487
+                    - architecture: Ampere
+                      cudaCores: 10752
+                      memoryTotal: "51527024640"
+                      name: NVIDIA RTX A6000
+                      uuid: GPU-33a26cec-2094-b972-4131-54236b5bfb6c
+                host: LARA156
+                memory:
+                    total: "270043099136"
+                os: Linux-6.8.0-111-generic-x86_64-with-glibc2.35
+                program: /home/shashwat/per-zone-uveitis/train_convnext.py
+                python: CPython 3.14.3
+                root: /home/shashwat/per-zone-uveitis
+                startedAt: "2026-05-27T23:14:18.986545Z"
+                writerId: 4hvbhl8zerax05ck75rn7cgsln1qujdl
+        m: []
+        python_version: 3.14.3
+        t:
+            "1":
+                - 1
+                - 5
+                - 41
+                - 53
+            "2":
+                - 1
+                - 5
+                - 41
+                - 53
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.14.3
+            "5": 0.26.1
+            "12": 0.26.1
+            "13": linux-x86_64
+        visualize:
+            test/roc_curve_class_0:
+                panel_config:
+                    fieldSettings:
+                        stroke: null
+                        x: FPR
+                        "y": TPR
+                    panelDefId: wandb/line/v0
+                    stringSettings:
+                        title: ROC Curve — Class 0 (AUC=0.496)
+                    transform:
+                        name: tableWithLeafColNames
+                    userQuery:
+                        queryFields:
+                            - args:
+                                - name: runSets
+                                  value: ${runSets}
+                              fields:
+                                - fields: []
+                                  name: id
+                                - fields: []
+                                  name: name
+                                - fields: []
+                                  name: _defaultColorIndex
+                                - args:
+                                    - name: tableKey
+                                      value: test/roc_curve_class_0_table
+                                  fields: []
+                                  name: summaryTable
+                              name: runSets
+                panel_type: Vega2
+            test/roc_curve_class_1:
+                panel_config:
+                    fieldSettings:
+                        stroke: null
+                        x: FPR
+                        "y": TPR
+                    panelDefId: wandb/line/v0
+                    stringSettings:
+                        title: ROC Curve — Class 1 (AUC=0.496)
+                    transform:
+                        name: tableWithLeafColNames
+                    userQuery:
+                        queryFields:
+                            - args:
+                                - name: runSets
+                                  value: ${runSets}
+                              fields:
+                                - fields: []
+                                  name: id
+                                - fields: []
+                                  name: name
+                                - fields: []
+                                  name: _defaultColorIndex
+                                - args:
+                                    - name: tableKey
+                                      value: test/roc_curve_class_1_table
+                                  fields: []
+                                  name: summaryTable
+                              name: runSets
+                panel_type: Vega2
+batch_size:
+    value: 32
+class_weighting:
+    value: inverse
+csv:
+    value: processed_image_arrays_multiclass/zone_training_table.csv
+data_root:
+    value: processed_image_arrays_multiclass
+epochs:
+    value: 20
+focal_gamma:
+    value: 2
+grad_clip_norm:
+    value: 1
+head_hidden:
+    value: 256
+image_size:
+    value: 288
+loss:
+    value: soft_ce
+lr:
+    value: 0.0001
+no_amp:
+    value: false
+no_pretrained:
+    value: false
+no_wandb:
+    value: false
+num_classes:
+    value: 2
+num_workers:
+    value: 8
+output_dir:
+    value: runs/protocol_r01_convnext_soft_ce
+patience:
+    value: 8
+seed:
+    value: 13
+soft_labels:
+    value: true
+split_attempts:
+    value: 10000
+split_json:
+    value: splits/canonical_split.json
+wandb_project:
+    value: uveitis-per-zone
+wandb_run_name:
+    value: protocol_r01_convnext_soft_ce
+weight_decay:
+    value: 0.0001
+zone_embed_dim:
+    value: 64

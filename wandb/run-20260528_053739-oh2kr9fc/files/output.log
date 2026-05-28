@@ -1,0 +1,23 @@
+Device: cuda | AMP: True
+Loss: focal class_weighting=inverse
+Image size: 288 | zone_embed_dim: 64 | head_hidden: 256 | epochs: 20 | batch_size: 32 | patience: 8
+Scheduler: cosine | Head LR: 0.0001 | Backbone LR: 1e-05 | grad_clip_norm: 1.0
+Split: {"train": [12, 13, 15, 17, 21, 22, 23, 24, 25, 26, 27, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 40, 41, 42, 43, 45, 48, 49, 50, 51, 52, 54, 55, 58, 59, 61, 62, 63, 64, 65, 66, 67, 68, 70, 73, 74, 75, 77, 78, 81, 82, 83, 85, 86, 88, 89, 90, 91, 93, 94, 97, 98, 304], "val": [16, 18, 19, 28, 46, 47, 56, 60, 69, 71, 72, 79, 95, 340], "test": [10, 11, 14, 20, 39, 44, 57, 76, 80, 84, 87, 92, 96, 99]}
+epoch=001 train_loss=0.0930 val_loss=0.1137 val_macro_f1=0.3107 val_bal_acc=0.5000 lr_backbone=1.00e-05 lr_classifier=1.00e-04
+epoch=001 val/per_class={'0': {'precision': 0.0, 'recall': 0.0, 'f1': 0.0, 'specificity': 1.0}, '1': {'precision': 0.45066666666666666, 'recall': 1.0, 'f1': 0.6213235294117646, 'specificity': 0.0}}
+epoch=002 train_loss=0.0860 val_loss=0.0917 val_macro_f1=0.3393 val_bal_acc=0.5039 lr_backbone=9.94e-06 lr_classifier=9.94e-05
+epoch=002 val/per_class={'0': {'precision': 0.6190476190476191, 'recall': 0.03155339805825243, 'f1': 0.06004618937644342, 'specificity': 0.9763313609467456}, '1': {'precision': 0.45267489711934156, 'recall': 0.9763313609467456, 'f1': 0.6185567010309277, 'specificity': 0.03155339805825243}}
+epoch=003 train_loss=0.0829 val_loss=0.0943 val_macro_f1=0.3517 val_bal_acc=0.4956 lr_backbone=9.76e-06 lr_classifier=9.76e-05
+epoch=003 val/per_class={'0': {'precision': 0.5116279069767442, 'recall': 0.05339805825242718, 'f1': 0.0967032967032967, 'specificity': 0.9378698224852071}, '1': {'precision': 0.44837340876944837, 'recall': 0.9378698224852071, 'f1': 0.6066985645933014, 'specificity': 0.05339805825242718}}
+epoch=004 train_loss=0.0826 val_loss=0.0954 val_macro_f1=0.3658 val_bal_acc=0.5029 lr_backbone=9.46e-06 lr_classifier=9.46e-05
+epoch=004 val/per_class={'0': {'precision': 0.5714285714285714, 'recall': 0.06796116504854369, 'f1': 0.12147505422993493, 'specificity': 0.9378698224852071}, '1': {'precision': 0.4522111269614836, 'recall': 0.9378698224852071, 'f1': 0.6102021174205967, 'specificity': 0.06796116504854369}}
+epoch=005 train_loss=0.0818 val_loss=0.0915 val_macro_f1=0.4061 val_bal_acc=0.5215 lr_backbone=9.05e-06 lr_classifier=9.05e-05
+epoch=005 val/per_class={'0': {'precision': 0.6619718309859155, 'recall': 0.11407766990291263, 'f1': 0.1946169772256729, 'specificity': 0.9289940828402367}, '1': {'precision': 0.46244477172312226, 'recall': 0.9289940828402367, 'f1': 0.6175024582104228, 'specificity': 0.11407766990291263}}
+epoch=006 train_loss=0.0806 val_loss=0.0929 val_macro_f1=0.4250 val_bal_acc=0.5342 lr_backbone=8.55e-06 lr_classifier=8.54e-05
+epoch=006 val/per_class={'0': {'precision': 0.7142857142857143, 'recall': 0.13349514563106796, 'f1': 0.22494887525562374, 'specificity': 0.9349112426035503}, '1': {'precision': 0.46953937592867756, 'recall': 0.9349112426035503, 'f1': 0.6251236399604353, 'specificity': 0.13349514563106796}}
+epoch=007 train_loss=0.0793 val_loss=0.0918 val_macro_f1=0.4553 val_bal_acc=0.5492 lr_backbone=7.96e-06 lr_classifier=7.94e-05
+epoch=007 val/per_class={'0': {'precision': 0.7395833333333334, 'recall': 0.17233009708737865, 'f1': 0.27952755905511806, 'specificity': 0.9260355029585798}, '1': {'precision': 0.4785932721712538, 'recall': 0.9260355029585798, 'f1': 0.6310483870967742, 'specificity': 0.17233009708737865}}
+epoch=008 train_loss=0.0792 val_loss=0.0927 val_macro_f1=0.4773 val_bal_acc=0.5518 lr_backbone=7.30e-06 lr_classifier=7.27e-05
+epoch=008 val/per_class={'0': {'precision': 0.7007874015748031, 'recall': 0.21601941747572814, 'f1': 0.3302411873840445, 'specificity': 0.8875739644970414}, '1': {'precision': 0.48154093097913325, 'recall': 0.8875739644970414, 'f1': 0.6243496357960457, 'specificity': 0.21601941747572814}}
+epoch=009 train_loss=0.0796 val_loss=0.0940 val_macro_f1=0.4302 val_bal_acc=0.5381 lr_backbone=6.58e-06 lr_classifier=6.55e-05
+epoch=009 val/per_class={'0': {'precision': 0.7307692307692307, 'recall': 0.1383495145631068, 'f1': 0.2326530612244898, 'specificity': 0.9378698224852071}, '1': {'precision': 0.47172619047619047, 'recall': 0.9378698224852071, 'f1': 0.6277227722772277, 'specificity': 0.1383495145631068}}

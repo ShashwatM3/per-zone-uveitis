@@ -13,3 +13,5 @@ Canonical split: `splits/canonical_split.json` (from baseline run, seed=13).
 | 4–10 | (queued) | CLIP tune if r3 loses; else ConvNeXt zone128 | — | — | — |
 | 3 | (running) protocol_r03_convnext_focal | ConvNeXt-Tiny focal vs CLIP on canonical split (exp 3) | — | — | — |
 | 3 | protocol_r03_convnext_focal | ConvNeXt-Tiny focal vs CLIP on canonical split (exp 3) | 0.5285 | +0.0025 | IMPROVED |
+| 4 | (running) protocol_r04_clip_focal | CLIP + focal loss | — | — | — |
+| 4 | protocol_r04_clip_focal | CLIP + focal loss | 0.4990 | -0.0295 | no gain |

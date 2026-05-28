@@ -11,3 +11,5 @@ Canonical split: `splits/canonical_split.json` (from baseline run, seed=13).
 | 2 | protocol_r02_clip_default | CLIP Large-D defaults, binary 20ep | 0.5259 | +0.0008 | IMPROVED → compare ConvNeXt (exp 3), tune CLIP |
 | 3 | protocol_r03_convnext_focal | ConvNeXt-Tiny focal vs CLIP (exp 3) | — | — | resuming… |
 | 4–10 | (queued) | CLIP tune if r3 loses; else ConvNeXt zone128 | — | — | — |
+| 3 | (running) protocol_r03_convnext_focal | ConvNeXt-Tiny focal vs CLIP on canonical split (exp 3) | — | — | — |
+| 3 | protocol_r03_convnext_focal | ConvNeXt-Tiny focal vs CLIP on canonical split (exp 3) | 0.5285 | +0.0025 | IMPROVED |

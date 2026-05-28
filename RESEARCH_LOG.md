@@ -15,3 +15,4 @@ Canonical split: `splits/canonical_split.json` (from baseline run, seed=13).
 | 4 | protocol_r04_clip_focal | CLIP + focal loss | 0.4990 | -0.0295 | No gain (val OK, test weak) |
 | 5–10 | (in progress) | CLIP tune + ConvNeXt zone128 + CLIP soft labels | — | — | resuming run 5… |
 | 5 | (running) protocol_r05_clip_freeze3 | CLIP unfreeze backbone after 3 epochs | — | — | — |
+| 5 | protocol_r05_clip_freeze3 | CLIP unfreeze backbone after 3 epochs | 0.5044 | -0.0240 | no gain |

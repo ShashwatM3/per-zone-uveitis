@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parent
 PY = "/home/shashwat/miniconda3/envs/venv/bin/python"
 SPLIT = ROOT / "splits/canonical_split.json"
 LOG = ROOT / "RESEARCH_LOG.md"
-BEST_F1 = 0.5259392164364525  # updated after run 2
+BEST_F1 = 0.5284623503393579  # protocol_r03_convnext_focal
 
 
 def metrics_summary(path: Path) -> dict:
@@ -60,11 +60,11 @@ def append_log(row: str) -> None:
 
 
 def run_cmd(name: str, cmd: list[str], run_id: int, hypothesis: str) -> None:
+    global BEST_F1
     out = ROOT / "runs" / name
     metrics_path = out / "metrics.json"
     if metrics_path.exists():
         s = metrics_summary(metrics_path)
-        global BEST_F1
         test_f1 = s["test_macro_f1"] or 0.0
         if test_f1 > BEST_F1:
             BEST_F1 = test_f1
@@ -86,7 +86,6 @@ def run_cmd(name: str, cmd: list[str], run_id: int, hypothesis: str) -> None:
     if proc.returncode != 0:
         raise SystemExit(f"Run {name} failed with code {proc.returncode}")
     s = metrics_summary(out / "metrics.json")
-    global BEST_F1
     test_f1 = s["test_macro_f1"] or 0.0
     delta = test_f1 - BEST_F1
     improved = test_f1 > BEST_F1
@@ -332,7 +331,6 @@ def main() -> None:
         for i, (name, cmd) in enumerate(experiments[start:], start=3 + start):
             hyp = HYPOTHESES.get(name, name)
             append_log(f"| {i} | (running) {name} | {hyp} | — | — | — |")
-            git_commit(f"pre-run: protocol run {i} — {name}\n\nHypothesis: {hyp}")
             run_cmd(name, cmd, i, hyp)
         print(f"\nDone. Best test.macro_f1={BEST_F1:.4f}")
     finally:

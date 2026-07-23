@@ -18,6 +18,7 @@ from torchvision import models, transforms
 from losses import build_loss
 from zone_dataset import (
     ZoneImageDataset,
+    exclude_fovea_fallback,
     labels_for,
     load_or_create_split,
     load_zone_records,
@@ -158,6 +159,17 @@ def parse_args() -> argparse.Namespace:
         help=(
             "Exclude tier-1 (raw_label==1) samples from training only. "
             "Validation/test are left unchanged for fair comparison."
+        ),
+    )
+    parser.add_argument(
+        "--exclude-fovea-fallback",
+        action="store_true",
+        help=(
+            "Drop zone rows whose source FP used image-center fovea fallback "
+            "(fovea_fallback=True in the sidecar .json). Their zone masks are "
+            "geometrically wrong. Unlike --exclude-tier1 (a label question, "
+            "train-only), this is an input-corruption question and is applied to "
+            "ALL splits (train/val/test)."
         ),
     )
     parser.add_argument(
@@ -553,6 +565,13 @@ def main() -> int:
     use_amp = device.type == "cuda" and not args.no_amp
 
     records = load_zone_records(args.csv, args.data_root)
+    if args.exclude_fovea_fallback:
+        before = len(records)
+        records = exclude_fovea_fallback(records)
+        print(
+            f"Excluded fovea-fallback: dropped {before - len(records)} zone rows "
+            f"(geometrically wrong masks); {len(records)} rows remain."
+        )
     split = load_or_create_split(
         records,
         split_json=args.split_json,

@@ -113,7 +113,7 @@ def collect_probs_dataloader(
     prob1_list: list[float] = []
     model.eval()
     for batch in loader:
-        images, labels, zones = batch_to_device(batch, device)
+        images, labels, zones, _ = batch_to_device(batch, device)
         with torch.amp.autocast(device_type=device.type, enabled=use_amp):
             logits = model(images, zones)
         probs = torch.softmax(logits.float(), dim=1)[:, 1]

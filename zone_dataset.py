@@ -46,12 +46,22 @@ class ZoneRecord:
     cx: int | None = None
     cy: int | None = None
     angle_deg: float | None = None
+    # True when pre_processing.py could not detect the yellow crosshair and fell
+    # back to image-center geometry -- the zone masks are attached to the wrong
+    # pixels. Sidecars written before this field existed default to False
+    # ("unknown, assume detected"); fovea_audit.py reports those separately.
+    fovea_fallback: bool = False
 
 
-def _read_zone_meta(json_path: Path) -> tuple[int, int, float]:
+def _read_zone_meta(json_path: Path) -> tuple[int, int, float, bool]:
     with json_path.open(encoding="utf-8") as f:
         meta = json.load(f)
-    return int(meta["cx"]), int(meta["cy"]), float(meta["angle_deg"])
+    return (
+        int(meta["cx"]),
+        int(meta["cy"]),
+        float(meta["angle_deg"]),
+        bool(meta.get("fovea_fallback", False)),
+    )
 
 
 def load_zone_records(csv_path: Path, data_root: Path) -> list[ZoneRecord]:
@@ -66,7 +76,7 @@ def load_zone_records(csv_path: Path, data_root: Path) -> list[ZoneRecord]:
     ``__getitem__`` time.
     """
     records: list[ZoneRecord] = []
-    meta_cache: dict[Path, tuple[int, int, float]] = {}
+    meta_cache: dict[Path, tuple[int, int, float, bool]] = {}
     missing_meta: list[Path] = []
 
     with csv_path.open(newline="", encoding="utf-8") as f:
@@ -110,14 +120,14 @@ def load_zone_records(csv_path: Path, data_root: Path) -> list[ZoneRecord]:
 
             meta_path = abs_path.with_suffix(".json")
             if meta_path in meta_cache:
-                cx, cy, angle = meta_cache[meta_path]
+                cx, cy, angle, fovea_fallback = meta_cache[meta_path]
             else:
                 try:
-                    cx, cy, angle = _read_zone_meta(meta_path)
+                    cx, cy, angle, fovea_fallback = _read_zone_meta(meta_path)
                 except FileNotFoundError:
                     missing_meta.append(meta_path)
                     continue
-                meta_cache[meta_path] = (cx, cy, angle)
+                meta_cache[meta_path] = (cx, cy, angle, fovea_fallback)
 
             records.append(
                 ZoneRecord(
@@ -129,6 +139,7 @@ def load_zone_records(csv_path: Path, data_root: Path) -> list[ZoneRecord]:
                     cx=cx,
                     cy=cy,
                     angle_deg=angle,
+                    fovea_fallback=fovea_fallback,
                 )
             )
 
@@ -151,6 +162,18 @@ def records_for_patients(
 ) -> list[ZoneRecord]:
     patient_set = set(patient_ids)
     return [record for record in records if record.patient_id in patient_set]
+
+
+def exclude_fovea_fallback(records: Iterable[ZoneRecord]) -> list[ZoneRecord]:
+    """Drop records whose source FP used image-center fovea fallback.
+
+    Those images have zone masks attached to the wrong pixels (the crosshair was
+    never detected), so every zone label is geometrically misaligned. Only
+    confirmed fallbacks (``fovea_fallback is True``) are dropped; sidecars that
+    predate the flag report ``False`` and are kept. See ``fovea_audit.py`` for the
+    per-status breakdown, including the "unknown geometry" population.
+    """
+    return [record for record in records if not record.fovea_fallback]
 
 
 def make_patient_split(
